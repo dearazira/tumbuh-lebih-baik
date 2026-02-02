@@ -42,8 +42,8 @@
         .vine-container {
             position: relative;
             width: 80%;
-            max-width: 800px;
-            height: 400px;
+            max-width: 900px;
+            height: 500px;
         }
 
         svg {
@@ -54,52 +54,84 @@
         .vine-path {
             fill: none;
             stroke: #5a7d5a;
-            stroke-width: 3;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: drawVine 4s ease-out forwards;
+            stroke-width: 4;
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+        }
+
+        .vine-path.drawing {
+            animation: drawVine 3s ease-out forwards;
         }
 
         @keyframes drawVine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Clickable flowers on vine */
+        .vine-flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transform: scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        .vine-flower.bloomed {
+            animation: bloomVineFlower 0.8s ease forwards;
+        }
+
+        @keyframes bloomVineFlower {
+            to { transform: scale(1); }
+        }
+
+        .vine-flower:hover {
+            transform: scale(1.2);
+        }
+
+        .vine-flower1 { top: 20%; left: 15%; }
+        .vine-flower2 { top: 35%; left: 35%; }
+        .vine-flower3 { top: 50%; left: 55%; }
+        .vine-flower4 { top: 28%; left: 75%; }
+
+        /* Text bubbles that appear when clicking flowers */
+        .intro-text-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 35px;
+            border-radius: 20px;
+            font-size: 20px;
+            color: #4a4a4a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            max-width: 500px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .intro-text-bubble.show {
+            animation: showBubble 0.6s ease forwards;
+        }
+
+        @keyframes showBubble {
             to {
-                stroke-dashoffset: 0;
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        .intro-words {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            color: #4a4a4a;
-            font-size: 24px;
-            opacity: 0;
-        }
+        .bubble1 { top: 15%; left: 50%; transform: translateX(-50%) translateY(20px); }
+        .bubble2 { top: 35%; left: 50%; transform: translateX(-50%) translateY(20px); }
+        .bubble3 { top: 55%; left: 50%; transform: translateX(-50%) translateY(20px); }
 
-        .word1 { top: 15%; animation: fadeWord 1s ease 1s forwards; }
-        .word2 { top: 40%; animation: fadeWord 1s ease 2.5s forwards; }
-        .word3 { top: 65%; animation: fadeWord 1s ease 4s forwards; }
-
-        @keyframes fadeWord {
-            to { opacity: 1; }
-        }
-
-        .start-prompt {
+        .next-hint {
             position: absolute;
             bottom: 50px;
             font-size: 16px;
             color: #666;
             opacity: 0;
-            animation: fadeIn 1s ease 5s forwards;
-            cursor: pointer;
-            padding: 12px 30px;
-            border: 2px solid #5a7d5a;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-        }
-
-        .start-prompt:hover {
-            background: #5a7d5a;
-            color: white;
+            animation: fadeIn 1s ease 0.5s forwards;
         }
 
         @keyframes fadeIn {
@@ -108,11 +140,13 @@
 
         /* ====== MAIN CONTENT ====== */
         .main-content {
+            display: none;
             opacity: 0;
             transition: opacity 1s ease;
         }
 
         .main-content.visible {
+            display: block;
             opacity: 1;
         }
 
@@ -122,14 +156,6 @@
             justify-content: center;
             align-items: center;
             padding: 60px 20px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease;
-        }
-
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         /* ====== DUNIA DAN KOTORNYA ====== */
@@ -140,23 +166,40 @@
         }
 
         .world-title {
-            font-size: 48px;
-            margin-bottom: 30px;
+            font-size: 52px;
+            margin-bottom: 40px;
             color: #3d3d3d;
             font-weight: normal;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .world-title:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-5px);
         }
 
         .world-subtitle {
             font-size: 20px;
             color: #666;
-            max-width: 600px;
-            line-height: 1.8;
+            max-width: 700px;
+            line-height: 1.9;
+            margin-bottom: 30px;
         }
 
         /* ====== ENVELOPE SECTION ====== */
         .envelope-section {
+            display: none;
             flex-direction: column;
+            align-items: center;
             gap: 40px;
+            background: #f5f5f0;
+        }
+
+        .envelope-section.active {
+            display: flex;
         }
 
         .envelope-wrapper {
@@ -165,18 +208,18 @@
         }
 
         .envelope {
-            width: 350px;
-            height: 220px;
+            width: 380px;
+            height: 240px;
             background: #fff;
-            border: 1px solid #d4c5a9;
-            border-radius: 5px;
+            border: 2px solid #c4b5a0;
+            border-radius: 8px;
             position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
             transition: transform 0.3s ease;
         }
 
-        .envelope:hover {
-            transform: translateY(-5px);
+        .envelope-wrapper:hover .envelope {
+            transform: translateY(-8px);
         }
 
         .envelope-flap {
@@ -184,13 +227,13 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 110px;
-            background: #f5f5f0;
-            border: 1px solid #d4c5a9;
+            height: 120px;
+            background: #f0e8dc;
+            border: 2px solid #c4b5a0;
             border-bottom: none;
-            clip-path: polygon(0 0, 50% 70%, 100% 0);
+            clip-path: polygon(0 0, 50% 75%, 100% 0);
             transform-origin: top center;
-            transition: transform 1s ease;
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 2;
         }
 
@@ -198,184 +241,337 @@
             transform: rotateX(-180deg);
         }
 
-        .letter-peek {
+        .envelope-label {
             position: absolute;
-            width: 90%;
-            height: 80%;
-            background: #fefefe;
+            width: 100%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
+            text-align: center;
+            font-size: 22px;
             color: #666;
+            z-index: 1;
         }
 
         .click-hint {
             margin-top: 20px;
             color: #888;
-            font-size: 14px;
+            font-size: 15px;
         }
 
-        /* ====== LETTERS DISPLAY ====== */
-        .letters-display {
+        /* ====== LETTERS SECTION ====== */
+        .letters-section {
             display: none;
-            max-width: 900px;
-            margin: 0 auto;
-            gap: 40px;
-        }
-
-        .letters-display.active {
-            display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 60px;
+            padding: 80px 20px;
         }
 
-        .letter-title {
-            font-size: 32px;
-            margin-bottom: 40px;
-            color: #4a4a4a;
-        }
-
-        .flowers-container {
+        .letters-section.active {
             display: flex;
-            gap: 80px;
-            justify-content: center;
-            align-items: flex-end;
         }
 
-        .flower-item {
+        .letters-title {
+            font-size: 36px;
+            color: #4a4a4a;
+            text-align: center;
+        }
+
+        .flowers-garden {
+            display: flex;
+            gap: 120px;
+            align-items: flex-end;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .flower-container {
             position: relative;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
         }
 
-        .flower-item:hover {
-            transform: translateY(-10px);
+        .flower-container:hover {
+            transform: translateY(-15px);
         }
 
-        /* LILY FLOWER */
-        .lily-flower {
-            width: 120px;
-            height: 180px;
+        /* ====== IMPROVED LILY FLOWER ====== */
+        .lily {
+            width: 140px;
+            height: 200px;
             position: relative;
         }
 
         .lily-stem {
-            width: 6px;
+            width: 8px;
             height: 0;
-            background: linear-gradient(to top, #4a7c4a, #6b9d6b);
+            background: linear-gradient(to top, #2d5016, #4a7c4a, #6b9d6b);
             margin: 0 auto;
-            animation: growStem 2s ease forwards;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .lily.grow .lily-stem {
+            animation: growStem 2s ease-out forwards;
+        }
+
+        @keyframes growStem {
+            to { height: 140px; }
+        }
+
+        .lily-leaves {
+            position: absolute;
+            width: 100%;
+            bottom: 40px;
+        }
+
+        .lily-leaf {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background: linear-gradient(to right, #4a7c4a, #6b9d6b);
+            border-radius: 0 50% 50% 0;
+            opacity: 0;
+        }
+
+        .lily.grow .lily-leaf {
+            animation: showLeaf 0.8s ease forwards;
+        }
+
+        .lily-leaf.left {
+            left: -25px;
+            top: 0;
+            transform-origin: right center;
+            animation-delay: 1.5s;
+        }
+
+        .lily-leaf.right {
+            right: -25px;
+            top: 20px;
+            transform: scaleX(-1);
+            animation-delay: 1.7s;
+        }
+
+        @keyframes showLeaf {
+            to { opacity: 1; }
         }
 
         .lily-bloom {
             position: absolute;
-            top: -60px;
+            top: -80px;
             left: 50%;
             transform: translateX(-50%) scale(0);
-            animation: bloomFlower 1.5s ease forwards;
+            width: 100px;
+            height: 100px;
+        }
+
+        .lily.grow .lily-bloom {
+            animation: bloomLily 1.5s ease-out forwards;
             animation-delay: 2s;
         }
 
+        @keyframes bloomLily {
+            0% { transform: translateX(-50%) scale(0) rotate(0deg); }
+            60% { transform: translateX(-50%) scale(1.1) rotate(10deg); }
+            100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+        }
+
         .lily-petal {
-            width: 30px;
-            height: 60px;
-            background: linear-gradient(to top, #ffd1dc, #fff);
-            border-radius: 15px 15px 5px 5px;
             position: absolute;
+            width: 32px;
+            height: 70px;
+            background: linear-gradient(to top, #ffc0e0, #fff5f8, #ffffff);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: inset 0 -10px 20px rgba(255, 192, 224, 0.3);
             transform-origin: bottom center;
         }
 
-        .lily-petal:nth-child(1) { transform: rotate(-40deg) translateX(-15px); }
-        .lily-petal:nth-child(2) { transform: rotate(-20deg) translateX(-7px); }
-        .lily-petal:nth-child(3) { transform: rotate(0deg); }
-        .lily-petal:nth-child(4) { transform: rotate(20deg) translateX(7px); }
-        .lily-petal:nth-child(5) { transform: rotate(40deg) translateX(15px); }
+        .lily-petal:nth-child(1) {
+            left: 50%;
+            transform: translateX(-50%) rotate(-50deg) translateY(-10px);
+        }
+        .lily-petal:nth-child(2) {
+            left: 50%;
+            transform: translateX(-50%) rotate(-25deg) translateY(-8px);
+        }
+        .lily-petal:nth-child(3) {
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+        }
+        .lily-petal:nth-child(4) {
+            left: 50%;
+            transform: translateX(-50%) rotate(25deg) translateY(-8px);
+        }
+        .lily-petal:nth-child(5) {
+            left: 50%;
+            transform: translateX(-50%) rotate(50deg) translateY(-10px);
+        }
 
         .lily-center {
             position: absolute;
-            width: 8px;
-            height: 40px;
-            background: #f4a460;
-            border-radius: 4px;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* SUNFLOWER */
-        .sunflower {
-            width: 120px;
-            height: 180px;
-            position: relative;
-        }
-
-        .sunflower-stem {
-            width: 6px;
-            height: 0;
-            background: linear-gradient(to top, #4a7c4a, #6b9d6b);
-            margin: 0 auto;
-            animation: growStem 2s ease forwards;
-            animation-delay: 0.5s;
-        }
-
-        .sunflower-bloom {
-            position: absolute;
-            top: -70px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 80px;
-            height: 80px;
-            animation: bloomFlower 1.5s ease forwards;
-            animation-delay: 2.5s;
-        }
-
-        .sunflower-petal {
-            position: absolute;
-            width: 25px;
-            height: 35px;
-            background: #ffd700;
-            border-radius: 50% 50% 50% 0;
-            transform-origin: bottom center;
-        }
-
-        .sunflower-petal:nth-child(1) { transform: rotate(0deg) translateY(-35px); }
-        .sunflower-petal:nth-child(2) { transform: rotate(45deg) translateY(-35px); }
-        .sunflower-petal:nth-child(3) { transform: rotate(90deg) translateY(-35px); }
-        .sunflower-petal:nth-child(4) { transform: rotate(135deg) translateY(-35px); }
-        .sunflower-petal:nth-child(5) { transform: rotate(180deg) translateY(-35px); }
-        .sunflower-petal:nth-child(6) { transform: rotate(225deg) translateY(-35px); }
-        .sunflower-petal:nth-child(7) { transform: rotate(270deg) translateY(-35px); }
-        .sunflower-petal:nth-child(8) { transform: rotate(315deg) translateY(-35px); }
-
-        .sunflower-center {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, #8b4513, #654321);
-            border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
-        .flower-label {
+        .lily-stamen {
+            position: absolute;
+            width: 3px;
+            height: 35px;
+            background: #f4a460;
+            border-radius: 2px;
+            transform-origin: bottom center;
+        }
+
+        .lily-stamen::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #8b4513;
+            border-radius: 50%;
+        }
+
+        .lily-stamen:nth-child(1) { transform: rotate(-15deg) translateX(-8px); }
+        .lily-stamen:nth-child(2) { transform: rotate(-7deg) translateX(-4px); }
+        .lily-stamen:nth-child(3) { transform: rotate(0deg); }
+        .lily-stamen:nth-child(4) { transform: rotate(7deg) translateX(4px); }
+        .lily-stamen:nth-child(5) { transform: rotate(15deg) translateX(8px); }
+
+        /* ====== IMPROVED SUNFLOWER ====== */
+        .sunflower {
+            width: 140px;
+            height: 220px;
+            position: relative;
+        }
+
+        .sunflower-stem {
+            width: 8px;
+            height: 0;
+            background: linear-gradient(to top, #2d5016, #4a7c4a, #6b9d6b);
+            margin: 0 auto;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .sunflower.grow .sunflower-stem {
+            animation: growStem 2s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        .sunflower-leaves {
+            position: absolute;
+            width: 100%;
+            bottom: 50px;
+        }
+
+        .sunflower-leaf {
+            position: absolute;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(to right, #4a7c4a, #6b9d6b);
+            border-radius: 0 80% 80% 0;
+            opacity: 0;
+        }
+
+        .sunflower.grow .sunflower-leaf {
+            animation: showLeaf 0.8s ease forwards;
+        }
+
+        .sunflower-leaf.left {
+            left: -30px;
+            top: 0;
+            animation-delay: 1.8s;
+        }
+
+        .sunflower-leaf.right {
+            right: -30px;
+            top: 25px;
+            transform: scaleX(-1);
+            animation-delay: 2s;
+        }
+
+        .sunflower-bloom {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 110px;
+            height: 110px;
+        }
+
+        .sunflower.grow .sunflower-bloom {
+            animation: bloomSunflower 1.5s ease-out forwards;
+            animation-delay: 2.3s;
+        }
+
+        @keyframes bloomSunflower {
+            0% { transform: translateX(-50%) scale(0) rotate(0deg); }
+            60% { transform: translateX(-50%) scale(1.15) rotate(-10deg); }
+            100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+        }
+
+        .sunflower-petals {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .sunflower-petal {
+            position: absolute;
+            width: 28px;
+            height: 42px;
+            background: linear-gradient(to top, #ffa500, #ffd700, #ffed4e);
+            border-radius: 50% 50% 50% 0;
+            box-shadow: inset 0 -8px 15px rgba(255, 165, 0, 0.3);
+            transform-origin: 14px 55px;
+        }
+
+        .sunflower-petal:nth-child(1) { transform: rotate(0deg); }
+        .sunflower-petal:nth-child(2) { transform: rotate(30deg); }
+        .sunflower-petal:nth-child(3) { transform: rotate(60deg); }
+        .sunflower-petal:nth-child(4) { transform: rotate(90deg); }
+        .sunflower-petal:nth-child(5) { transform: rotate(120deg); }
+        .sunflower-petal:nth-child(6) { transform: rotate(150deg); }
+        .sunflower-petal:nth-child(7) { transform: rotate(180deg); }
+        .sunflower-petal:nth-child(8) { transform: rotate(210deg); }
+        .sunflower-petal:nth-child(9) { transform: rotate(240deg); }
+        .sunflower-petal:nth-child(10) { transform: rotate(270deg); }
+        .sunflower-petal:nth-child(11) { transform: rotate(300deg); }
+        .sunflower-petal:nth-child(12) { transform: rotate(330deg); }
+
+        .sunflower-center {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #8b4513, #654321);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .sunflower-seed {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #3d2817;
+            border-radius: 50%;
+        }
+
+        .flower-name {
             text-align: center;
-            margin-top: 15px;
-            font-size: 16px;
+            margin-top: 20px;
+            font-size: 17px;
             color: #666;
-        }
-
-        @keyframes growStem {
-            to { height: 120px; }
-        }
-
-        @keyframes bloomFlower {
-            to { transform: translateX(-50%) scale(1); }
+            font-style: italic;
         }
 
         /* ====== MESSAGE MODAL ====== */
@@ -386,97 +582,100 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
+            background: rgba(0,0,0,0.75);
+            z-index: 3000;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .message-modal.active {
             display: flex;
         }
 
-        .message-content {
+        .message-box {
             background: #fff;
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 50px;
             position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .close-modal {
+        .close-btn {
             position: absolute;
             top: 20px;
-            right: 20px;
-            font-size: 30px;
+            right: 25px;
+            font-size: 32px;
             cursor: pointer;
             color: #999;
             transition: color 0.3s;
+            line-height: 1;
         }
 
-        .close-modal:hover {
+        .close-btn:hover {
             color: #333;
         }
 
-        .message-content h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
+        .message-box h2 {
+            font-size: 32px;
+            margin-bottom: 25px;
             color: #4a4a4a;
         }
 
-        .message-content p {
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 15px;
+        .message-box p {
+            font-size: 17px;
+            line-height: 1.9;
+            margin-bottom: 18px;
             color: #555;
             text-align: justify;
         }
 
-        .message-photos {
+        .message-images {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 30px 0;
+            gap: 18px;
+            margin: 35px 0;
         }
 
-        .message-photo {
+        .message-img {
             width: 100%;
-            height: 250px;
+            height: 280px;
             object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
-        .grow-better-btn {
+        .grow-btn {
             display: inline-block;
             margin-top: 30px;
-            padding: 15px 40px;
+            padding: 16px 45px;
             background: #5a7d5a;
             color: white;
             border: none;
-            border-radius: 30px;
-            font-size: 16px;
+            border-radius: 35px;
+            font-size: 17px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
         }
 
-        .grow-better-btn:hover {
+        .grow-btn:hover {
             background: #4a6d4a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
         }
 
         /* ====== STATEMENTS SECTION ====== */
         .statements-section {
             display: none;
             flex-direction: column;
-            gap: 40px;
-            max-width: 800px;
+            gap: 50px;
+            max-width: 850px;
             margin: 0 auto;
             padding: 80px 20px;
         }
@@ -485,30 +684,31 @@
             display: flex;
         }
 
-        .statement {
+        .statement-card {
             background: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 45px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
+            transform: translateY(40px);
+            transition: all 0.7s ease;
         }
 
-        .statement.visible {
+        .statement-card.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .statement h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
+        .statement-card h3 {
+            font-size: 24px;
+            margin-bottom: 18px;
             color: #5a7d5a;
+            font-weight: normal;
         }
 
-        .statement p {
-            font-size: 16px;
-            line-height: 1.8;
+        .statement-card p {
+            font-size: 17px;
+            line-height: 1.9;
             color: #555;
         }
 
@@ -517,9 +717,10 @@
             display: none;
             flex-direction: column;
             text-align: center;
-            gap: 30px;
-            max-width: 700px;
+            gap: 35px;
+            max-width: 750px;
             margin: 0 auto;
+            padding: 80px 20px;
         }
 
         .closing-section.active {
@@ -527,14 +728,15 @@
         }
 
         .closing-title {
-            font-size: 42px;
+            font-size: 46px;
             color: #4a4a4a;
             font-weight: normal;
+            line-height: 1.4;
         }
 
-        .closing-text {
-            font-size: 18px;
-            line-height: 1.8;
+        .closing-message {
+            font-size: 19px;
+            line-height: 1.9;
             color: #666;
         }
 
@@ -543,71 +745,80 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: rgba(255,255,255,0.95);
-            padding: 15px 20px;
+            background: rgba(255,255,255,0.96);
+            padding: 16px 22px;
             border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             display: none;
             align-items: center;
-            gap: 12px;
-            z-index: 100;
+            gap: 14px;
+            z-index: 200;
         }
 
         .audio-player.active {
             display: flex;
         }
 
-        .play-btn {
-            width: 40px;
-            height: 40px;
+        .play-button {
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             border: none;
             background: #5a7d5a;
             color: white;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .play-btn:hover {
+        .play-button:hover {
             background: #4a6d4a;
             transform: scale(1.1);
         }
 
-        .song-info {
+        .song-details {
             font-size: 13px;
             color: #555;
         }
 
+        .song-details strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
         @media (max-width: 768px) {
             .vine-container {
-                width: 90%;
-                height: 300px;
+                width: 95%;
+                height: 400px;
             }
 
-            .intro-words {
-                font-size: 18px;
+            .intro-text-bubble {
+                font-size: 16px;
+                padding: 20px 25px;
+                max-width: 90%;
             }
 
             .world-title {
-                font-size: 32px;
+                font-size: 36px;
             }
 
-            .flowers-container {
-                flex-direction: column;
-                gap: 40px;
+            .flowers-garden {
+                gap: 60px;
             }
 
-            .message-content {
-                padding: 30px;
+            .message-box {
+                padding: 35px 25px;
             }
 
-            .message-photos {
+            .message-images {
                 grid-template-columns: 1fr;
             }
 
             .closing-title {
-                font-size: 28px;
+                font-size: 32px;
             }
         }
     </style>
@@ -616,26 +827,45 @@
     <!-- INTRO SCREEN -->
     <div class="intro-screen" id="introScreen">
         <div class="vine-container">
-            <svg viewBox="0 0 800 400">
-                <path class="vine-path" d="M 50 350 Q 150 250, 200 300 T 400 200 T 600 280 T 750 180" />
+            <svg viewBox="0 0 900 500" id="vineSvg">
+                <path class="vine-path" id="vinePath" d="M 50 400 Q 150 300, 250 350 T 450 250 T 650 320 T 850 200" />
             </svg>
-            <div class="intro-words word1">Kadang hidup tidak seindah yang dibayangkan</div>
-            <div class="intro-words word2">Tapi justru dari situ kita belajar</div>
-            <div class="intro-words word3">Untuk menerima dan tumbuh lebih baik</div>
+            
+            <!-- Clickable flowers on vine -->
+            <div class="vine-flower vine-flower1" id="vineFlower1">🌸</div>
+            <div class="vine-flower vine-flower2" id="vineFlower2">🌺</div>
+            <div class="vine-flower vine-flower3" id="vineFlower3">🌼</div>
+            <div class="vine-flower vine-flower4" id="vineFlower4">🌷</div>
+            
+            <!-- Text bubbles -->
+            <div class="intro-text-bubble bubble1" id="bubble1">
+                Kadang hidup tidak seindah yang dibayangkan
+            </div>
+            <div class="intro-text-bubble bubble2" id="bubble2">
+                Tapi justru dari situ kita belajar
+            </div>
+            <div class="intro-text-bubble bubble3" id="bubble3">
+                Untuk menerima dan tumbuh lebih baik
+            </div>
+            
+            <div class="next-hint" id="nextHint" style="display: none;">
+                Tap bunga untuk melanjutkan →
+            </div>
         </div>
-        <div class="start-prompt" id="startBtn">Mulai Perjalanan</div>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content" id="mainContent">
-        <!-- DUNIA DAN KOTORNYA -->
+        <!-- WORLD SECTION -->
         <section class="section world-section" id="worldSection">
-            <h1 class="world-title">Untuk Kita, Dunia, dan Kotornya</h1>
-            <p class="world-subtitle">
-                Kita hidup di dunia yang tidak sempurna, dengan segala kekurangan dan kesalahannya.
-                Tapi di tengah semua itu, kita belajar untuk saling menerima, saling memaafkan,
-                dan tumbuh bersama menjadi lebih baik.
-            </p>
+            <div>
+                <h1 class="world-title" id="worldTitle">Untuk Kita, Dunia, dan Kotornya</h1>
+                <p class="world-subtitle">
+                    Kita hidup di dunia yang tidak sempurna, dengan segala kekurangan dan kesalahannya.
+                    Tapi di tengah semua itu, kita belajar untuk saling menerima, saling memaafkan,
+                    dan tumbuh bersama menjadi lebih baik.
+                </p>
+            </div>
         </section>
 
         <!-- ENVELOPE SECTION -->
@@ -643,39 +873,53 @@
             <div class="envelope-wrapper" id="envelopeWrapper">
                 <div class="envelope">
                     <div class="envelope-flap"></div>
-                    <div class="letter-peek">Cinta dan Kotornya</div>
+                    <div class="envelope-label">Cinta dan Kotornya</div>
                 </div>
                 <div class="click-hint">Klik untuk membuka</div>
             </div>
         </section>
 
-        <!-- LETTERS DISPLAY -->
-        <section class="section" id="lettersSection">
-            <div class="letters-display" id="lettersDisplay">
-                <h2 class="letter-title">Dua Surat untuk Kalian</h2>
-                <div class="flowers-container">
-                    <!-- LILY FOR SARAH -->
-                    <div class="flower-item" id="lilyFlower">
-                        <div class="lily-flower">
-                            <div class="lily-stem">
-                                <div class="lily-bloom">
-                                    <div class="lily-petal"></div>
-                                    <div class="lily-petal"></div>
-                                    <div class="lily-petal"></div>
-                                    <div class="lily-petal"></div>
-                                    <div class="lily-petal"></div>
-                                    <div class="lily-center"></div>
+        <!-- LETTERS SECTION -->
+        <section class="section letters-section" id="lettersSection">
+            <h2 class="letters-title">Dua Surat untuk Kalian</h2>
+            <div class="flowers-garden">
+                <!-- LILY FOR SARAH -->
+                <div class="flower-container" id="lilyContainer">
+                    <div class="lily" id="lilyFlower">
+                        <div class="lily-stem">
+                            <div class="lily-leaves">
+                                <div class="lily-leaf left"></div>
+                                <div class="lily-leaf right"></div>
+                            </div>
+                            <div class="lily-bloom">
+                                <div class="lily-petal"></div>
+                                <div class="lily-petal"></div>
+                                <div class="lily-petal"></div>
+                                <div class="lily-petal"></div>
+                                <div class="lily-petal"></div>
+                                <div class="lily-center">
+                                    <div class="lily-stamen"></div>
+                                    <div class="lily-stamen"></div>
+                                    <div class="lily-stamen"></div>
+                                    <div class="lily-stamen"></div>
+                                    <div class="lily-stamen"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="flower-label">Untuk Sarah</div>
                     </div>
+                    <div class="flower-name">Untuk Sarah</div>
+                </div>
 
-                    <!-- SUNFLOWER FOR AMAL -->
-                    <div class="flower-item" id="sunflowerItem">
-                        <div class="sunflower">
-                            <div class="sunflower-stem">
-                                <div class="sunflower-bloom">
+                <!-- SUNFLOWER FOR AMAL -->
+                <div class="flower-container" id="sunflowerContainer">
+                    <div class="sunflower" id="sunflowerFlower">
+                        <div class="sunflower-stem">
+                            <div class="sunflower-leaves">
+                                <div class="sunflower-leaf left"></div>
+                                <div class="sunflower-leaf right"></div>
+                            </div>
+                            <div class="sunflower-bloom">
+                                <div class="sunflower-petals">
                                     <div class="sunflower-petal"></div>
                                     <div class="sunflower-petal"></div>
                                     <div class="sunflower-petal"></div>
@@ -684,35 +928,39 @@
                                     <div class="sunflower-petal"></div>
                                     <div class="sunflower-petal"></div>
                                     <div class="sunflower-petal"></div>
-                                    <div class="sunflower-center"></div>
+                                    <div class="sunflower-petal"></div>
+                                    <div class="sunflower-petal"></div>
+                                    <div class="sunflower-petal"></div>
+                                    <div class="sunflower-petal"></div>
                                 </div>
+                                <div class="sunflower-center" id="sunflowerCenter"></div>
                             </div>
                         </div>
-                        <div class="flower-label">Untuk Amal</div>
                     </div>
+                    <div class="flower-name">Untuk Amal</div>
                 </div>
             </div>
         </section>
 
         <!-- STATEMENTS SECTION -->
         <section class="statements-section" id="statementsSection">
-            <div class="statement">
+            <div class="statement-card">
                 <h3>Semester kemarin memang berat</h3>
                 <p>Ada saat-saat dimana kita merasa lelah, kecewa, atau bahkan ingin menyerah. Tapi kita tetap bertahan sampai sejauh ini.</p>
             </div>
-            <div class="statement">
+            <div class="statement-card">
                 <h3>Dan semester ini akan lebih berat lagi</h3>
                 <p>Kita tahu itu. Banyak deadline, banyak tekanan, banyak ekspektasi. Masa depan terasa menakutkan dan mengejar kita.</p>
             </div>
-            <div class="statement">
+            <div class="statement-card">
                 <h3>Tapi kita tidak sendirian</h3>
                 <p>Itulah yang membuat perbedaan. Kita punya satu sama lain. Kita bisa saling menguatkan, saling support, saling memaafkan.</p>
             </div>
-            <div class="statement">
+            <div class="statement-card">
                 <h3>Mari saling memaafkan kesalahan yang lalu</h3>
                 <p>Tidak ada yang sempurna. Kita semua pernah salah, pernah mengecewakan, pernah menyakiti. Tapi hari ini, kita pilih untuk move on dengan hati yang lebih lapang.</p>
             </div>
-            <div class="statement">
+            <div class="statement-card">
                 <h3>Dan tumbuh lebih baik bersama-sama</h3>
                 <p>Seperti bunga yang mekar setelah badai, kita akan tumbuh lebih kuat dan lebih indah dari sebelumnya.</p>
             </div>
@@ -721,59 +969,60 @@
         <!-- CLOSING SECTION -->
         <section class="section closing-section" id="closingSection">
             <h1 class="closing-title">Mari Kita Terus Bertumbuh</h1>
-            <p class="closing-text">
+            <p class="closing-message">
                 Untuk Sarah dan Amal,<br><br>
                 Terima kasih sudah menjadi bagian dari perjalanan ini.
                 Semester 6 menanti kita dengan segala tantangannya,
                 tapi kita hadapi bersama dengan semangat baru dan hati yang lebih terbuka.
                 <br><br>
                 Seperti yang dinyanyikan Nadin,<br>
-                "Walau tak mudah, walau tak indah, tapi diterima."
+                <em>"Walau tak mudah, walau tak indah, tapi diterima."</em>
                 <br><br>
                 Let's grow better, together.
             </p>
         </section>
     </div>
 
-    <!-- MESSAGE MODALS -->
+    <!-- SARAH MODAL -->
     <div class="message-modal" id="sarahModal">
-        <div class="message-content">
-            <span class="close-modal" onclick="closeModal('sarahModal')">&times;</span>
+        <div class="message-box">
+            <span class="close-btn" onclick="closeModal('sarahModal')">&times;</span>
             <h2>Untuk Sarah</h2>
             <p>Sarah, kamu adalah sosok yang kuat meskipun kadang tidak terlihat. Semester kemarin pasti berat untukmu, dan aku minta maaf kalau ada kata-kata atau tindakan yang menyakitimu.</p>
             <p>Seperti bunga lily yang tumbuh dengan anggun di tengah segala kondisi, kamu juga terus berkembang dan bertahan. Kemurnian dan ketulusanmu adalah sesuatu yang berharga.</p>
-            <div class="message-photos">
-                <img src="sarah 1.jpeg" alt="Sarah 1" class="message-photo">
-                <img src="sarah 2.jpeg" alt="Sarah 2" class="message-photo">
+            <div class="message-images">
+                <img src="sarah 1.jpeg" alt="Sarah 1" class="message-img">
+                <img src="sarah 2.jpeg" alt="Sarah 2" class="message-img">
             </div>
             <p>Semester 6 ini, mari kita saling support lebih dari sebelumnya. Kamu tidak sendirian dalam menghadapi semua ini. Kita ada untuk satu sama lain.</p>
             <p>Terima kasih sudah bertahan sejauh ini. Mari kita tumbuh lebih baik bersama.</p>
-            <button class="grow-better-btn" onclick="showStatements()">Tumbuh Lebih Baik</button>
+            <button class="grow-btn" onclick="goToStatements()">Tumbuh Lebih Baik</button>
         </div>
     </div>
 
+    <!-- AMAL MODAL -->
     <div class="message-modal" id="amalModal">
-        <div class="message-content">
-            <span class="close-modal" onclick="closeModal('amalModal')">&times;</span>
+        <div class="message-box">
+            <span class="close-btn" onclick="closeModal('amalModal')">&times;</span>
             <h2>Untuk Amal</h2>
             <p>Amal, energi dan semangatmu selalu menginspirasi. Tapi aku tahu di balik itu semua, kamu juga punya beban dan lelahmu sendiri. Maaf kalau selama ini ada hal yang membuatmu tidak nyaman.</p>
             <p>Seperti bunga matahari yang selalu mengikuti cahaya, kamu juga selalu mencari yang terbaik dalam setiap situasi. Kekuatanmu untuk tetap positif adalah sesuatu yang luar biasa.</p>
-            <div class="message-photos">
-                <img src="amal 1.jpeg" alt="Amal 1" class="message-photo">
-                <img src="amal 2.jpeg" alt="Amal 2" class="message-photo">
+            <div class="message-images">
+                <img src="amal 1.jpeg" alt="Amal 1" class="message-img">
+                <img src="amal 2.jpeg" alt="Amal 2" class="message-img">
             </div>
             <p>Di semester yang lebih berat ini, kita butuh cahaya sepertimu. Tapi ingat, kamu juga boleh lelah, boleh istirahat, boleh meminta bantuan. Kita semua ada untukmu.</p>
             <p>Terima kasih sudah menjadi teman yang luar biasa. Mari kita hadapi semester 6 dengan semangat baru.</p>
-            <button class="grow-better-btn" onclick="showStatements()">Tumbuh Lebih Baik</button>
+            <button class="grow-btn" onclick="goToStatements()">Tumbuh Lebih Baik</button>
         </div>
     </div>
 
     <!-- AUDIO PLAYER -->
     <div class="audio-player" id="audioPlayer">
-        <button class="play-btn" id="playBtn">▶</button>
-        <div class="song-info">
-            <div style="font-weight: bold;">Tapi Diterima</div>
-            <div style="font-size: 11px;">Nadin Amizah</div>
+        <button class="play-button" id="playButton">▶</button>
+        <div class="song-details">
+            <strong>Tapi Diterima</strong>
+            <span>Nadin Amizah</span>
         </div>
     </div>
 
@@ -783,135 +1032,161 @@
 
     <script>
         // VARIABLES
-        let currentSection = 0;
-        let musicStarted = false;
         const bgMusic = document.getElementById('bgMusic');
-        const playBtn = document.getElementById('playBtn');
         const audioPlayer = document.getElementById('audioPlayer');
+        const playButton = document.getElementById('playButton');
+        let musicStarted = false;
+        let currentBubble = 0;
+        let flowersClicked = 0;
 
-        // START BUTTON
-        document.getElementById('startBtn').addEventListener('click', function() {
-            document.getElementById('introScreen').classList.add('fade-out');
-            setTimeout(() => {
-                document.getElementById('introScreen').style.display = 'none';
-                document.getElementById('mainContent').classList.add('visible');
-                showSection('worldSection');
-            }, 1500);
+        // INTRO FLOW
+        setTimeout(() => {
+            document.getElementById('vinePath').classList.add('drawing');
+        }, 500);
+
+        setTimeout(() => {
+            const flowers = document.querySelectorAll('.vine-flower');
+            flowers.forEach((flower, index) => {
+                setTimeout(() => {
+                    flower.classList.add('bloomed');
+                }, index * 400);
+            });
+        }, 3500);
+
+        setTimeout(() => {
+            document.getElementById('nextHint').style.display = 'block';
+        }, 5500);
+
+        // VINE FLOWERS CLICK - TAP TAP TO SHOW BUBBLES
+        document.getElementById('vineFlower1').addEventListener('click', () => showBubble(0));
+        document.getElementById('vineFlower2').addEventListener('click', () => showBubble(1));
+        document.getElementById('vineFlower3').addEventListener('click', () => showBubble(2));
+        document.getElementById('vineFlower4').addEventListener('click', () => {
+            if (currentBubble >= 3) {
+                // Transition to main content
+                document.getElementById('introScreen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('introScreen').style.display = 'none';
+                    document.getElementById('mainContent').classList.add('visible');
+                }, 1500);
+            }
         });
 
-        // SHOW SECTION
-        function showSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => {
-                    section.classList.add('visible');
-                }, 300);
+        function showBubble(index) {
+            if (index === currentBubble) {
+                const bubble = document.getElementById(`bubble${index + 1}`);
+                if (bubble) {
+                    bubble.classList.add('show');
+                    currentBubble++;
+                }
             }
         }
 
-        // ENVELOPE CLICK
+        // WORLD TITLE CLICK → GO TO ENVELOPE
+        document.getElementById('worldTitle').addEventListener('click', () => {
+            document.getElementById('worldSection').style.display = 'none';
+            document.getElementById('envelopeSection').classList.add('active');
+        });
+
+        // ENVELOPE CLICK → OPEN AND SHOW LETTERS
         document.getElementById('envelopeWrapper').addEventListener('click', function() {
             this.classList.add('opened');
             setTimeout(() => {
                 document.getElementById('envelopeSection').style.display = 'none';
-                document.getElementById('lettersDisplay').classList.add('active');
-                showSection('lettersSection');
+                document.getElementById('lettersSection').classList.add('active');
+                // Trigger flower growth
+                document.getElementById('lilyFlower').classList.add('grow');
+                document.getElementById('sunflowerFlower').classList.add('grow');
+                // Add sunflower seeds
+                addSunflowerSeeds();
             }, 1500);
         });
 
-        // FLOWER CLICKS - MUSIC STARTS HERE
-        document.getElementById('lilyFlower').addEventListener('click', function() {
-            if (!musicStarted) {
-                startMusic();
-            }
-            showModal('sarahModal');
+        // Add seeds to sunflower center
+        function addSunflowerSeeds() {
+            const center = document.getElementById('sunflowerCenter');
+            const positions = [
+                {x: 10, y: 12}, {x: 22, y: 8}, {x: 35, y: 15},
+                {x: 15, y: 25}, {x: 28, y: 30}, {x: 38, y: 24},
+                {x: 12, y: 38}, {x: 25, y: 42}, {x: 35, y: 35}
+            ];
+            positions.forEach(pos => {
+                const seed = document.createElement('div');
+                seed.className = 'sunflower-seed';
+                seed.style.left = pos.x + 'px';
+                seed.style.top = pos.y + 'px';
+                center.appendChild(seed);
+            });
+        }
+
+        // FLOWER CLICKS → START MUSIC & SHOW MODAL
+        document.getElementById('lilyContainer').addEventListener('click', () => {
+            startMusic();
+            openModal('sarahModal');
         });
 
-        document.getElementById('sunflowerItem').addEventListener('click', function() {
-            if (!musicStarted) {
-                startMusic();
-            }
-            showModal('amalModal');
+        document.getElementById('sunflowerContainer').addEventListener('click', () => {
+            startMusic();
+            openModal('amalModal');
         });
 
         // START MUSIC
         function startMusic() {
-            bgMusic.play();
-            musicStarted = true;
-            audioPlayer.classList.add('active');
-            playBtn.textContent = '⏸';
+            if (!musicStarted) {
+                bgMusic.play();
+                audioPlayer.classList.add('active');
+                playButton.textContent = '⏸';
+                musicStarted = true;
+            }
         }
 
-        // PLAY/PAUSE MUSIC
-        playBtn.addEventListener('click', function() {
+        // PLAY/PAUSE BUTTON
+        playButton.addEventListener('click', () => {
             if (bgMusic.paused) {
                 bgMusic.play();
-                playBtn.textContent = '⏸';
+                playButton.textContent = '⏸';
             } else {
                 bgMusic.pause();
-                playBtn.textContent = '▶';
+                playButton.textContent = '▶';
             }
         });
 
-        // SHOW MODAL
-        function showModal(modalId) {
+        // MODAL FUNCTIONS
+        function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // CLOSE MODAL
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             document.body.style.overflow = 'auto';
         }
 
-        // SHOW STATEMENTS
-        let statementsShown = false;
-        function showStatements() {
+        // GO TO STATEMENTS
+        function goToStatements() {
             closeModal('sarahModal');
             closeModal('amalModal');
             
-            if (!statementsShown) {
-                document.getElementById('lettersSection').style.display = 'none';
-                document.getElementById('statementsSection').classList.add('active');
-                showSection('statementsSection');
-                
-                // Animate statements one by one
-                const statements = document.querySelectorAll('.statement');
-                statements.forEach((statement, index) => {
-                    setTimeout(() => {
-                        statement.classList.add('visible');
-                    }, index * 800);
-                });
-
-                // Show closing after all statements
+            document.getElementById('lettersSection').style.display = 'none';
+            document.getElementById('statementsSection').classList.add('active');
+            
+            // Animate statements
+            const statements = document.querySelectorAll('.statement-card');
+            statements.forEach((statement, index) => {
                 setTimeout(() => {
-                    document.getElementById('closingSection').classList.add('active');
-                    showSection('closingSection');
-                }, statements.length * 800 + 2000);
-
-                statementsShown = true;
-            }
-        }
-
-        // INTERSECTION OBSERVER
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                    statement.classList.add('visible');
+                }, index * 600);
             });
-        }, { threshold: 0.3 });
 
-        document.querySelectorAll('.section').forEach(section => {
-            observer.observe(section);
-        });
-
-        // SCROLL REVEAL FOR WORLD SECTION
-        setTimeout(() => {
-            showSection('worldSection');
-        }, 100);
+            // Show closing
+            setTimeout(() => {
+                document.getElementById('closingSection').classList.add('active');
+                document.getElementById('closingSection').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, statements.length * 600 + 1500);
+        }
     </script>
 </body>
 </html>
