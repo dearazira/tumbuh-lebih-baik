@@ -5,265 +5,273 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tumbuh Lebih Baik</title>
     <style>
-        /* CSS tetap sama seperti draf Anda dengan tambahan perbaikan kecil */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Georgia', serif; overflow-x: hidden; background: #f5f5f0; color: #2c2c2c; scroll-behavior: smooth; }
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap');
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Text', serif; 
+            background: #fdfaf5; 
+            color: #4a443f; 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Tekstur Kertas Beras */
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+            opacity: 0.4; pointer-events: none; z-index: 9999;
+        }
+
+        /* INTRO OVERLAY */
         .intro-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(145deg, #f0f8ff, #e0ffff);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; transition: opacity 1.5s ease;
+            background: #fdfaf5; display: flex; justify-content: center; align-items: center;
+            z-index: 2000; transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .intro-screen.fade-out { opacity: 0; pointer-events: none; }
 
-        .page {
-            width: 85%; max-width: 1000px; height: 90%; background: white;
-            border: 12px double #0099cc; box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-            position: relative; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 60px;
+        .start-btn {
+            padding: 15px 40px; background: transparent; border: 1px solid #a68b6d;
+            color: #a68b6d; font-family: 'Crimson Text', serif; font-size: 18px;
+            letter-spacing: 2px; cursor: pointer; transition: 0.5s;
+        }
+        .start-btn:hover { background: #a68b6d; color: white; letter-spacing: 4px; }
+
+        /* CONTENT WRAPPER */
+        .page-wrapper {
+            opacity: 0; transition: opacity 2s ease; padding: 20px;
+        }
+        .page-wrapper.visible { opacity: 1; }
+
+        .section { 
+            min-height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 100px 20px;
+            transition: all 1.5s ease;
         }
 
-        .corner { position: absolute; width: 60px; height: 60px; border: 4px solid #ff66b2; }
-        .top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-        .top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
-        .bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
-        .bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+        h1, h2 { font-family: 'Dancing Script', cursive; font-weight: 500; color: #7d6e5d; }
 
-        .inner-border { position: absolute; top: 30px; bottom: 30px; left: 30px; right: 30px; border: 3px dotted #33cccc; border-radius: 12px; }
-        .symbol { position: absolute; font-size: 40px; color: #ff6699; opacity: 0.7; }
-        .symbol.top { top: 30px; left: 50%; transform: translateX(-50%); }
-        .symbol.bottom { bottom: 30px; left: 50%; transform: translateX(-50%); }
+        /* WORLD SECTION */
+        .world-title { font-size: 4rem; cursor: pointer; transition: 1s; margin-bottom: 20px; }
+        .world-title:hover { letter-spacing: 5px; opacity: 0.7; }
 
-        .intro-text-line { font-size: 24px; color: #4a4a4a; margin: 20px 0; opacity: 0; transform: translateY(20px); }
-        .intro-text-line.show { animation: showText 0.8s ease forwards; }
-        @keyframes showText { to { opacity: 1; transform: translateY(0); } }
-
-        .continue-btn {
-            margin-top: 30px; padding: 14px 40px; background: #0099cc; color: white;
-            border: none; border-radius: 30px; font-size: 16px; cursor: pointer;
-            opacity: 0; transition: all 0.3s ease;
-        }
-        .continue-btn.show { animation: fadeIn 1s ease forwards; }
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        /* MAIN CONTENT SECTIONS */
-        .main-content { display: none; opacity: 0; transition: opacity 1s ease; }
-        .main-content.visible { display: block; opacity: 1; }
-        .section { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 60px 20px; }
-
-        .world-section { flex-direction: column; text-align: center; background: linear-gradient(180deg, #f5f5f0 0%, #e8dcc4 100%); }
-        .world-title { font-size: 52px; margin-bottom: 40px; color: #3d3d3d; cursor: pointer; transition: 0.3s; padding: 20px; }
-        .world-title:hover { background: rgba(255,255,255,0.5); transform: translateY(-5px); border-radius: 10px;}
-        .world-subtitle { font-size: 20px; color: #666; max-width: 700px; line-height: 1.9; }
-
-        .envelope-section { display: none; flex-direction: column; align-items: center; background: #f5f5f0; }
-        .envelope-wrapper { position: relative; cursor: pointer; }
-        .envelope { width: 380px; height: 240px; background: #fff; border: 2px solid #c4b5a0; position: relative; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        /* ENVELOPE */
+        .envelope-section { display: none; opacity: 0; transform: translateY(30px); }
+        .envelope-wrapper { width: 300px; height: 200px; background: #ece4d8; border: 1px solid #d4c5b3; position: relative; cursor: pointer; transition: 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .envelope-flap { 
-            position: absolute; top: 0; left: 0; right: 0; height: 120px; background: #f0e8dc; 
-            border: 2px solid #c4b5a0; clip-path: polygon(0 0, 50% 75%, 100% 0); 
-            transition: transform 1.2s; z-index: 2; transform-origin: top;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #e4dacb; clip-path: polygon(0 0, 50% 60%, 100% 0); 
+            z-index: 2; transition: 1s; transform-origin: top;
         }
         .opened .envelope-flap { transform: rotateX(-180deg); }
-        .envelope-label { position: absolute; width: 100%; top: 50%; text-align: center; font-size: 22px; color: #666; }
 
-        /* FLOWERS */
-        .letters-section { display: none; flex-direction: column; align-items: center; gap: 60px; }
-        .flowers-garden { display: flex; gap: 120px; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
-        
-        /* Lily & Sunflower CSS (Diringkas untuk efisiensi ruang) */
-        .lily, .sunflower { width: 140px; height: 200px; position: relative; }
-        .lily-stem, .sunflower-stem { width: 8px; height: 0; background: #4a7c4a; margin: 0 auto; transition: height 2s; }
-        .grow .lily-stem, .grow .sunflower-stem { height: 140px; }
-        .lily-bloom, .sunflower-bloom { position: absolute; top: -80px; left: 50%; transform: translateX(-50%) scale(0); transition: 1.5s 2s; }
-        .grow .lily-bloom, .grow .sunflower-bloom { transform: translateX(-50%) scale(1); }
-        
-        /* Lily Petals */
-        .lily-petal { position: absolute; width: 30px; height: 60px; background: white; border: 1px solid #ffd1dc; border-radius: 50%; transform-origin: bottom center; }
-        .lily-petal:nth-child(1) { transform: rotate(-40deg); }
-        .lily-petal:nth-child(2) { transform: rotate(-20deg); }
-        .lily-petal:nth-child(3) { transform: rotate(0deg); }
-        .lily-petal:nth-child(4) { transform: rotate(20deg); }
-        .lily-petal:nth-child(5) { transform: rotate(40deg); }
+        /* FLOWERS GARDEN */
+        .letters-section { display: none; margin-top: 50px; }
+        .flowers-garden { display: flex; gap: 150px; margin-top: 80px; align-items: flex-end; }
 
-        /* Sunflower Petals */
-        .sunflower-petal { position: absolute; width: 20px; height: 40px; background: #ffd700; border-radius: 50%; transform-origin: 10px 45px; }
-        .sunflower-center { width: 40px; height: 40px; background: #5d3a1a; border-radius: 50%; position: absolute; top: 25px; left: 0px; }
+        /* Lily Visuals */
+        .flower-label { margin-top: 20px; font-family: 'Crimson Text'; font-style: italic; font-size: 1.2rem; }
+        .lily { width: 100px; position: relative; cursor: pointer; }
+        .stem { width: 4px; height: 0; background: #6b8e23; margin: 0 auto; transition: 2.5s ease-out; }
+        .grow .stem { height: 150px; }
 
-        /* MODALS */
-        .message-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
-        .message-modal.active { display: flex; }
-        .message-box { background: white; padding: 40px; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; position: relative; }
-        .message-img { width: 100%; height: 200px; object-fit: cover; margin: 10px 0; border-radius: 8px; }
-        .close-btn { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; }
+        .lily-bloom { position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0); transition: 2s 1.5s ease; }
+        .grow .lily-bloom { transform: translateX(-50%) scale(1); }
+        .lily-petal { position: absolute; width: 25px; height: 55px; background: #fffcf5; border: 1px solid #eee; border-radius: 50% 50% 10% 10%; transform-origin: bottom center; }
+        .lily-petal:nth-child(1) { transform: rotate(-30deg); }
+        .lily-petal:nth-child(2) { transform: rotate(0deg); height: 65px; }
+        .lily-petal:nth-child(3) { transform: rotate(30deg); }
+
+        /* Sunflower Visuals */
+        .sunflower-bloom { position: absolute; top: -45px; left: 50%; transform: translateX(-50%) scale(0); transition: 2s 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .grow .sunflower-bloom { transform: translateX(-50%) scale(1); }
+        .sun-petal { position: absolute; width: 12px; height: 35px; background: #eeb422; border-radius: 50%; transform-origin: center 45px; }
+        .sun-center { width: 35px; height: 35px; background: #3d2b1f; border-radius: 50%; position: absolute; top: 10px; left: -11px; z-index: 5; border: 2px solid #5d3a1a; }
 
         /* STATEMENTS */
-        .statements-section { display: none; flex-direction: column; gap: 30px; padding: 60px; max-width: 800px; margin: 0 auto; }
-        .statement-card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); opacity: 0; transform: translateY(20px); transition: 0.8s; }
+        .statements-section { display: none; max-width: 700px; margin: 0 auto; text-align: center; }
+        .statement-card { margin-bottom: 80px; opacity: 0; transform: translateY(40px); transition: 2s; }
         .statement-card.visible { opacity: 1; transform: translateY(0); }
+        .statement-card h3 { font-size: 2rem; margin-bottom: 10px; font-style: italic; }
 
-        .audio-player { position: fixed; bottom: 20px; right: 20px; background: white; padding: 10px 20px; border-radius: 50px; display: none; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000; }
+        /* MODALS */
+        .message-modal { position: fixed; inset: 0; background: rgba(253, 250, 245, 0.98); z-index: 5000; display: none; opacity: 0; transition: 1.5s; align-items: center; justify-content: center; }
+        .message-modal.active { display: flex; opacity: 1; }
+        .message-box { max-width: 500px; padding: 40px; text-align: center; border: 1px solid #d4c5b3; }
+        .message-img { width: 100%; border-radius: 2px; filter: sepia(30%); margin: 20px 0; }
+
+        #audioControl { position: fixed; bottom: 30px; left: 30px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #a68b6d; z-index: 10000; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <audio id="bgMusic" loop>
-        <source src="nadin.mp3" type="audio/mpeg"> </audio>
+        <source src="nadin.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="audioControl">Music is playing...</div>
 
     <div class="intro-screen" id="introScreen">
-        <div class="page">
-            <div class="corner top-left"></div><div class="corner top-right"></div>
-            <div class="corner bottom-left"></div><div class="corner bottom-right"></div>
-            <div class="inner-border"></div>
-            <div class="intro-content">
-                <div class="intro-text-line" id="line1">Kadang hidup tidak seindah yang dibayangkan</div>
-                <div class="intro-text-line" id="line2">Tapi justru dari situ kita belajar</div>
-                <div class="intro-text-line" id="line3">Untuk menerima dan tumbuh lebih baik</div>
-                <button class="continue-btn" id="continueBtn">Mulai Perjalanan</button>
-            </div>
-        </div>
+        <button class="start-btn" id="startBtn">MASUK KE DUNIA KAMI</button>
     </div>
 
-    <div class="main-content" id="mainContent">
-        <section class="section world-section" id="worldSection">
+    <div class="page-wrapper" id="pageWrapper">
+        <section class="section world-section">
             <h1 class="world-title" id="worldTitle">Untuk Kita, Dunia, dan Kotornya</h1>
-            <p class="world-subtitle">Klik judul di atas untuk membuka pesan...</p>
+            <p style="font-style: italic; color: #8c7e6d;">(Sentuh judul di atas dengan lembut)</p>
         </section>
 
         <section class="section envelope-section" id="envelopeSection">
             <div class="envelope-wrapper" id="envelopeWrapper">
-                <div class="envelope">
-                    <div class="envelope-flap"></div>
-                    <div class="envelope-label">Cinta dan Kotornya</div>
-                </div>
-                <p style="text-align:center; margin-top:20px; color:#888;">Buka Amplopnya</p>
+                <div class="envelope-flap"></div>
+                <div style="position:absolute; bottom: 20px; width: 100%; text-align: center; font-style: italic; color: #7d6e5d;">Cinta dan Kotornya</div>
             </div>
+            <p style="margin-top: 30px; font-style: italic;">Buka perlahan...</p>
         </section>
 
         <section class="section letters-section" id="lettersSection">
-            <h2 style="font-size: 30px; color: #4a4a4a;">Pilih Bunga Kalian</h2>
+            <h2>Pilih Bunga Kalian</h2>
             <div class="flowers-garden">
-                <div class="flower-container" id="lilyContainer">
+                <div class="lily-container" id="lilyContainer">
                     <div class="lily" id="lilyFlower">
-                        <div class="lily-stem"></div>
+                        <div class="stem"></div>
                         <div class="lily-bloom">
-                            <div class="lily-petal"></div><div class="lily-petal"></div><div class="lily-petal"></div><div class="lily-petal"></div><div class="lily-petal"></div>
+                            <div class="lily-petal"></div><div class="lily-petal"></div><div class="lily-petal"></div>
                         </div>
                     </div>
-                    <p style="text-align:center; margin-top:60px;">Sarah</p>
+                    <p class="flower-label">Sarah</p>
                 </div>
 
-                <div class="flower-container" id="sunflowerContainer">
+                <div class="sunflower-container" id="sunflowerContainer">
                     <div class="sunflower" id="sunflowerFlower">
-                        <div class="sunflower-stem"></div>
-                        <div class="sunflower-bloom">
-                            <div class="sunflower-petal" style="transform:rotate(0deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(45deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(90deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(135deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(180deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(225deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(270deg)"></div>
-                            <div class="sunflower-petal" style="transform:rotate(315deg)"></div>
-                            <div class="sunflower-center"></div>
+                        <div class="stem" style="background: #556b2f;"></div>
+                        <div class="sunflower-bloom" id="sunPetals">
+                            <div class="sun-center"></div>
                         </div>
                     </div>
-                    <p style="text-align:center; margin-top:60px;">Amal</p>
+                    <p class="flower-label">Amal</p>
                 </div>
             </div>
         </section>
 
         <section class="statements-section" id="statementsSection">
-            <div class="statement-card"><h3>Semester kemarin memang berat</h3><p>Ada saat-saat dimana kita merasa lelah, tapi kita tetap bertahan.</p></div>
-            <div class="statement-card"><h3>Dan semester ini akan lebih berat lagi</h3><p>Banyak deadline dan ekspektasi, tapi jangan takut.</p></div>
-            <div class="statement-card"><h3>Tapi kita tidak sendirian</h3><p>Kita punya satu sama lain untuk saling menguatkan.</p></div>
-            <div class="statement-card"><h3>Mari saling memaafkan</h3><p>Lupakan yang lalu, mari tumbuh dengan hati yang lapang.</p></div>
-            <div class="statement-card" style="background:#0099cc; color:white;"><h3>Let's Grow Better, Together.</h3></div>
+            <div class="statement-card">
+                <h3>Semester kemarin memang berat.</h3>
+                <p>Ada saat di mana napas terasa sesak dan langkah terasa kaku. Tapi kau masih di sini, bukan?</p>
+            </div>
+            <div class="statement-card">
+                <h3>Dan esok mungkin akan lebih gaduh.</h3>
+                <p>Deadline dan ekspektasi akan datang seperti ombak, namun jangan biarkan ia menenggelamkanmu.</p>
+            </div>
+            <div class="statement-card">
+                <h3>Kita punya satu sama lain.</h3>
+                <p>Untuk saling memaafkan, untuk saling mendekap dalam kata-kata yang tak terucap.</p>
+            </div>
+            <div class="statement-card">
+                <h2 style="font-size: 3rem;">Let's Grow Better, Together.</h2>
+            </div>
         </section>
     </div>
 
     <div class="message-modal" id="sarahModal">
         <div class="message-box">
-            <span class="close-btn" onclick="closeModal('sarahModal')">&times;</span>
             <h2>Untuk Sarah</h2>
-            <p>Sarah, kamu adalah sosok yang kuat. Seperti bunga lily yang anggun, kemurnian hatimu adalah sesuatu yang berharga.</p>
+            <p>Kau anggun seperti Lily. Meski dunia kadang kotor, murnimu jangan pernah hilang.</p>
             <img src="sarah 1.jpeg" class="message-img">
-            <p>Ayo kita hadapi Semester 6 ini bersama-sama. Kamu tidak sendirian.</p>
-            <button onclick="goToStatements()" style="padding:10px 20px; cursor:pointer;">Lanjut Bertumbuh</button>
+            <button onclick="goToStatements()" class="start-btn" style="padding: 10px 20px; font-size: 14px;">Lanjutkan Tumbuh</button>
         </div>
     </div>
 
     <div class="message-modal" id="amalModal">
         <div class="message-box">
-            <span class="close-btn" onclick="closeModal('amalModal')">&times;</span>
             <h2>Untuk Amal</h2>
-            <p>Amal, semangatmu seperti matahari. Maafkan segala kekurangan di masa lalu, mari kita buat cerita baru yang lebih indah.</p>
+            <p>Tetaplah bersinar, matahari kami. Maafkan yang telah lalu, mari mekar lagi dengan lebih indah.</p>
             <img src="amal 1.jpeg" class="message-img">
-            <p>Tetaplah bersinar, tapi jangan lupa istirahat jika lelah. Kami ada di sini.</p>
-            <button onclick="goToStatements()" style="padding:10px 20px; cursor:pointer;">Lanjut Bertumbuh</button>
+            <button onclick="goToStatements()" class="start-btn" style="padding: 10px 20px; font-size: 14px;">Lanjutkan Tumbuh</button>
         </div>
-    </div>
-
-    <div class="audio-player" id="audioPlayer">
-        <span>🎵 Now Playing...</span>
     </div>
 
     <script>
         const music = document.getElementById('bgMusic');
-        
-        // Intro sequence
-        setTimeout(() => document.getElementById('line1').classList.add('show'), 500);
-        setTimeout(() => document.getElementById('line2').classList.add('show'), 1500);
-        setTimeout(() => document.getElementById('line3').classList.add('show'), 2500);
-        setTimeout(() => document.getElementById('continueBtn').classList.add('show'), 3500);
+        const sunPetals = document.getElementById('sunPetals');
 
-        document.getElementById('continueBtn').onclick = () => {
+        // Buat kelopak matahari secara otomatis
+        for(let i=0; i<12; i++) {
+            let p = document.createElement('div');
+            p.className = 'sun-petal';
+            p.style.transform = `rotate(${i * 30}deg)`;
+            sunPetals.appendChild(p);
+        }
+
+        // Start Journey & Music
+        document.getElementById('startBtn').onclick = () => {
+            music.play();
             document.getElementById('introScreen').classList.add('fade-out');
-            document.getElementById('mainContent').classList.add('visible');
-            document.getElementById('audioPlayer').style.display = 'flex';
-            music.play().catch(e => console.log("Audio play blocked, need interaction"));
+            document.getElementById('pageWrapper').classList.add('visible');
         };
 
+        // World to Envelope
         document.getElementById('worldTitle').onclick = () => {
-            const env = document.getElementById('envelopeSection');
-            env.style.display = 'flex';
-            env.scrollIntoView();
+            const sec = document.getElementById('envelopeSection');
+            sec.style.display = 'flex';
+            setTimeout(() => {
+                sec.style.opacity = '1';
+                sec.style.transform = 'translateY(0)';
+                window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
+            }, 100);
         };
 
+        // Envelope to Flowers
         document.getElementById('envelopeWrapper').onclick = function() {
             this.classList.add('opened');
             setTimeout(() => {
-                const letSec = document.getElementById('lettersSection');
-                letSec.style.display = 'flex';
-                letSec.scrollIntoView();
+                const sec = document.getElementById('lettersSection');
+                sec.style.display = 'flex';
+                window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
             }, 1500);
         };
 
+        // Grow Sarah
         document.getElementById('lilyContainer').onclick = () => {
             document.getElementById('lilyFlower').classList.add('grow');
-            setTimeout(() => document.getElementById('sarahModal').classList.add('active'), 2500);
+            setTimeout(() => {
+                document.getElementById('sarahModal').classList.add('active');
+            }, 4000);
         };
 
+        // Grow Amal
         document.getElementById('sunflowerContainer').onclick = () => {
             document.getElementById('sunflowerFlower').classList.add('grow');
-            setTimeout(() => document.getElementById('amalModal').classList.add('active'), 2500);
+            setTimeout(() => {
+                document.getElementById('amalModal').classList.add('active');
+            }, 4000);
         };
 
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
         function goToStatements() {
-            closeModal('sarahModal');
-            closeModal('amalModal');
-            const stateSec = document.getElementById('statementsSection');
-            stateSec.style.display = 'flex';
-            stateSec.scrollIntoView();
+            document.querySelectorAll('.message-modal').forEach(m => m.classList.remove('active'));
+            const sec = document.getElementById('statementsSection');
+            sec.style.display = 'block';
+            window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
             
             const cards = document.querySelectorAll('.statement-card');
             cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('visible'), i * 800);
+                setTimeout(() => card.classList.add('visible'), (i+1) * 1000);
             });
         }
+
+        // Mute/Unmute
+        document.getElementById('audioControl').onclick = () => {
+            if(music.paused) {
+                music.play();
+                document.getElementById('audioControl').innerText = "Music is playing...";
+            } else {
+                music.pause();
+                document.getElementById('audioControl').innerText = "Music is paused";
+            }
+        };
     </script>
 </body>
 </html>
