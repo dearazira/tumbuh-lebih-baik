@@ -9,170 +9,150 @@
         :root {
             --nadin-brown: #7c6a46;
             --nadin-beige: #f9f6f0;
-            --petal-color: #e5d1b8;
-            --envelope-color: #f2ede4;
+            --lily-pink: #fbcce7;
+            --sun-yellow: #ffda62;
         }
 
         body, html {
-            margin: 0; padding: 0;
-            background-color: var(--nadin-beige);
-            font-family: 'Inter', sans-serif;
-            color: #5b574a;
-            overflow-x: hidden;
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            margin: 0; padding: 0; background: var(--nadin-beige);
+            color: #4a453c; font-family: 'Inter', sans-serif;
+            overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        /* --- STAGE 1: INTRO BUNGA INTERAKTIF --- */
-        #intro-stage {
-            position: fixed; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; background: var(--nadin-beige);
-            transition: opacity 2s;
-        }
+        .center-flex { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
 
-        .flower-grow { position: relative; width: 100px; height: 200px; cursor: pointer; }
-        .stem { 
-            width: 3px; background: #8fa17d; position: absolute; bottom: 0; left: 50%; 
-            height: 0; transition: height 4s ease-in-out; 
-        }
-        .blossom { 
-            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%) scale(0);
-            transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .petal-intro {
-            position: absolute; background: var(--petal-color); width: 40px; height: 60px;
-            border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%; transform-origin: bottom center;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
+        /* --- STAGE 1: BUNGA MENJALAR --- */
+        #intro-stage { cursor: pointer; background: var(--nadin-beige); position: fixed; inset: 0; z-index: 200; }
+        
+        .vine-container { width: 300px; height: 400px; position: relative; }
+        .vine { fill: none; stroke: #8fa17d; stroke-width: 3; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 6s ease-in-out; }
+        .vine.grow { stroke-dashoffset: 0; }
 
-        #lyric-display { font-family: 'Crimson Text', serif; font-size: 1.5rem; font-style: italic; margin-top: 40px; height: 30px; opacity: 0; transition: opacity 1s; }
+        #lyric-text { font-family: 'Crimson Text', serif; font-size: 1.4rem; font-style: italic; margin-top: 20px; min-height: 40px; transition: 1s; }
 
         /* --- STAGE 2: AMPLOP & SURAT --- */
-        #envelope-stage { display: none; perspective: 1000px; padding-top: 100px; }
+        #envelope-stage { display: none; padding: 100px 0; }
+        .envelope-wrapper { position: relative; width: 320px; height: 200px; background: #f2ede4; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin: 0 auto; transition: 1s; }
+        .envelope-top { position: absolute; top: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 120px solid #e2ddd3; transform-origin: top; transition: 1s; z-index: 10; }
+        .envelope-wrapper.open .envelope-top { transform: rotateX(180deg); }
         
-        .envelope-wrapper { position: relative; width: 320px; height: 200px; background: var(--envelope-color); margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .envelope-top {
-            position: absolute; top: 0; width: 0; height: 0;
-            border-left: 160px solid transparent; border-right: 160px solid transparent;
-            border-top: 120px solid #e2ddd3; transform-origin: top; z-index: 5; transition: transform 1s;
-        }
-        .envelope-wrapper.open .envelope-top { transform: rotateX(180deg); z-index: 1; }
+        .letter { position: absolute; bottom: 5px; left: 5px; right: 5px; background: white; height: 180px; transition: 2s; z-index: 5; overflow: hidden; padding: 20px; box-sizing: border-box; }
+        .envelope-wrapper.open .letter { transform: translateY(-350px); height: 1200px; width: 360px; left: -20px; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
 
-        .letter {
-            position: absolute; bottom: 10px; left: 10px; right: 10px; background: white;
-            padding: 20px; height: 160px; transition: transform 2s, height 2s;
-            z-index: 2; overflow: hidden; border: 1px solid #eee;
-        }
-        .envelope-wrapper.open .letter { transform: translateY(-300px); height: 1100px; width: 350px; left: -15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        /* Efek Bunga Keluar dari Amplop */
+        .burst-flower { position: absolute; pointer-events: none; animation: fly 3s forwards; font-size: 20px; z-index: 15; }
+        @keyframes fly { to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; } }
 
-        /* --- STAGE 3: CONTENT INSIDE LETTER --- */
-        .main-content { opacity: 0; transition: opacity 2s 1s; padding: 20px; text-align: center; }
-        .card { background: var(--nadin-beige); padding: 20px; margin-top: 30px; border: 1px solid #ece9e0; }
-        .slideshow { width: 100%; height: 200px; overflow: hidden; position: relative; margin-bottom: 15px; }
-        .slideshow img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: opacity 1s; }
+        /* --- STAGE 3: BUNGA SPESIFIK (Lily & Sun) --- */
+        .flower-choice { display: flex; gap: 40px; justify-content: center; margin: 40px 0; }
+        .flower-btn { cursor: pointer; transition: 0.3s; filter: grayscale(50%); text-align: center; }
+        .flower-btn:hover { filter: grayscale(0%); transform: scale(1.1); }
+        .flower-icon { font-size: 50px; margin-bottom: 10px; }
+
+        /* --- MODAL DETAIL --- */
+        #detail-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--nadin-beige); padding: 40px; width: 85%; max-width: 400px; border-radius: 5px; position: relative; }
+        .close-modal { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
+
+        /* Slideshow */
+        .slideshow { width: 100%; height: 250px; position: relative; overflow: hidden; margin: 20px 0; border: 1px solid #ddd; }
+        .slideshow img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: 1s; }
         .slideshow img.active { opacity: 1; }
 
-        /* --- FLOWER BURST PARTICLES --- */
-        .burst-flower {
-            position: absolute; width: 15px; height: 15px; background: var(--petal-color);
-            border-radius: 50%; pointer-events: none; z-index: 10; animation: fly 3s forwards ease-out;
-        }
-        @keyframes fly {
-            to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
-        }
-
-        button { background: var(--nadin-brown); color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Crimson Text', serif; font-style: italic; margin-top: 20px; }
+        .hidden { display: none; opacity: 0; }
+        button { background: var(--nadin-brown); color: white; border: none; padding: 12px 25px; cursor: pointer; font-family: 'Crimson Text'; font-style: italic; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <audio id="lagu" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
 
-    <div id="intro-stage">
-        <div class="flower-grow" onclick="startExperience()">
-            <div class="stem" id="intro-stem"></div>
-            <div class="blossom" id="intro-blossom">
-                <div class="petal-intro" style="transform: rotate(0deg)"></div>
-                <div class="petal-intro" style="transform: rotate(72deg)"></div>
-                <div class="petal-intro" style="transform: rotate(144deg)"></div>
-                <div class="petal-intro" style="transform: rotate(216deg)"></div>
-                <div class="petal-intro" style="transform: rotate(288deg)"></div>
-            </div>
+    <div id="intro-stage" class="center-flex">
+        <div class="vine-container">
+            <svg viewBox="0 0 100 200">
+                <path id="main-vine" class="vine" d="M50,200 C50,150 20,150 20,100 C20,50 80,50 80,20" />
+                <path class="vine" d="M50,150 C70,130 80,110 70,90" />
+                <path class="vine" d="M30,120 C10,100 20,80 40,70" />
+            </svg>
         </div>
-        <p id="lyric-display">Klik bunga untuk mulai tumbuh...</p>
+        <p id="lyric-text">Klik untuk menumbuhkan cerita...</p>
     </div>
 
-    <div id="envelope-stage">
+    <div id="envelope-stage" class="center-flex">
         <div class="envelope-wrapper" id="envelope">
             <div class="envelope-top"></div>
-            <div class="letter">
-                <div class="main-content" id="final-content">
-                    <p style="letter-spacing: 2px; font-size: 0.7rem;">REKONSILIASI</p>
-                    <h2 style="font-family: 'Crimson Text'; font-weight: 400; color: var(--nadin-brown);">Untuk Kita, Dunia, dan Kotornya</h2>
+            <div class="letter" id="letter-content">
+                <div id="inner-letter-content" class="hidden">
+                    <p style="font-size: 0.7rem; letter-spacing: 2px;">SURAT TERBUKA</p>
+                    <h2 style="font-family: 'Crimson Text'; font-weight: 400;">Untuk Kita, Dunia, dan Kotornya</h2>
+                    <p style="font-family: 'Crimson Text'; font-style: italic;">"Mari saling membasuh luka sebelum musim baru tiba."</p>
                     
-                    <div class="card">
-                        <div class="slideshow" id="slide-sarah">
-                            <img src="sarah 1.jpeg" class="active">
-                            <img src="sarah 2.jpeg">
-                            <img src="kita 1.jpeg">
+                    <div class="flower-choice">
+                        <div class="flower-btn" onclick="openDetail('sarah')">
+                            <div class="flower-icon">🌸</div>
+                            <p>Lily (Sarah)</p>
                         </div>
-                        <h4 style="font-family: 'Crimson Text';">Untuk Sarah</h4>
-                        <p style="font-size: 0.8rem; line-height: 1.6;">"Jika kemarin aku adalah duri yang tak sengaja melukai jemarimu, maafkan aku. Mari basuh debu yang lama, dan biarkan kita tumbuh lagi."</p>
+                        <div class="flower-btn" onclick="openDetail('amal')">
+                            <div class="flower-icon">🌻</div>
+                            <p>Matahari (Amal)</p>
+                        </div>
                     </div>
 
-                    <div class="card">
-                        <div class="slideshow" id="slide-amal">
-                            <img src="amal 1.jpeg" class="active">
-                            <img src="amal 2.jpeg">
-                            <img src="kita 2.jpeg">
-                        </div>
-                        <h4 style="font-family: 'Crimson Text';">Untuk Amal</h4>
-                        <p style="font-size: 0.8rem; line-height: 1.6;">"Banyak kurangku yang kau dekap dengan sabar. Mari saling memaafkan agar kita tetap punya satu sama lain untuk pulang."</p>
+                    <div id="closing-msg" style="margin-top: 50px; padding: 20px; border-top: 1px solid #eee;">
+                        <p style="font-size: 0.9rem; line-height: 1.8;">
+                            Semester 6 mungkin akan menagih segalanya, tapi selama kita saling menerima, kotornya dunia takkan mampu mematikan kita. <br><br>
+                            <b>Mari tumbuh lebih baik.</b>
+                        </p>
                     </div>
-
-                    <button onclick="location.reload()">Mulai Lagi dari Awal?</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const quotes = ["Sempurna tak ada padaku...", "Atas harumnya kasihmu...", "Segala kurangku...", "Tapi diterima."];
-        let hasStarted = false;
+    <div id="detail-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="modal-name" style="font-family: 'Crimson Text';"></h3>
+            <div class="slideshow" id="modal-slideshow"></div>
+            <p id="modal-text" style="font-size: 0.85rem; line-height: 1.6; text-align: justify;"></p>
+        </div>
+    </div>
 
-        function startExperience() {
-            if(hasStarted) return;
-            hasStarted = true;
+    <script>
+        const quotes = ["Sempurna tak ada padaku...", "Banyak kurangku...", "Tapi diterima.", "Mari kita tumbuh bersama lagi."];
+        let started = false;
+
+        function startIntro() {
+            if(started) return;
+            started = true;
             document.getElementById('lagu').play();
             
-            // 1. Tumbuhkan batang
-            document.getElementById('intro-stem').style.height = '150px';
+            // Animasi menjalar
+            document.querySelectorAll('.vine').forEach(v => v.classList.add('grow'));
             
-            // 2. Jalankan lirik
             let i = 0;
-            const lyricInterval = setInterval(() => {
-                const el = document.getElementById('lyric-display');
-                el.style.opacity = 0;
+            const interval = setInterval(() => {
+                const txt = document.getElementById('lyric-text');
+                txt.style.opacity = 0;
                 setTimeout(() => {
                     if(i < quotes.length) {
-                        el.innerText = quotes[i];
-                        el.style.opacity = 1;
-                        if(i === 3) document.getElementById('intro-blossom').style.transform = 'translate(-50%, -50%) scale(1.5)';
+                        txt.innerText = quotes[i];
+                        txt.style.opacity = 1;
                         i++;
                     } else {
-                        clearInterval(lyricInterval);
+                        clearInterval(interval);
                         setTimeout(transitionToEnvelope, 2000);
                     }
                 }, 1000);
-            }, 3500);
+            }, 3000);
         }
 
         function transitionToEnvelope() {
             document.getElementById('intro-stage').style.opacity = 0;
             setTimeout(() => {
                 document.getElementById('intro-stage').style.display = 'none';
-                document.getElementById('envelope-stage').style.display = 'block';
-                setTimeout(openEnvelope, 1500);
+                document.getElementById('envelope-stage').style.display = 'flex';
+                setTimeout(openEnvelope, 1000);
             }, 2000);
         }
 
@@ -180,46 +160,80 @@
             const env = document.getElementById('envelope');
             env.classList.add('open');
             
-            // Burst bunga saat terbuka
-            for(let i=0; i<30; i++) {
-                createFlowerBurst(env);
+            // Bunga Beriringan keluar
+            for(let j=0; j<25; j++) {
+                setTimeout(() => createParticle(env), j * 100);
             }
 
             setTimeout(() => {
-                document.getElementById('final-content').style.opacity = 1;
-                startSlideshows();
+                document.getElementById('inner-letter-content').classList.remove('hidden');
+                document.getElementById('inner-letter-content').style.opacity = 1;
+                document.getElementById('inner-letter-content').style.transition = "2s";
             }, 2000);
         }
 
-        function createFlowerBurst(parent) {
-            const f = document.createElement('div');
-            f.className = 'burst-flower';
-            const x = (Math.random() - 0.5) * 500;
-            const y = (Math.random() - 0.8) * 500;
-            f.style.setProperty('--x', `${x}px`);
-            f.style.setProperty('--y', `${y}px`);
-            f.style.left = '50%';
-            f.style.top = '20%';
-            parent.appendChild(f);
-            setTimeout(() => f.remove(), 3000);
+        function createParticle(parent) {
+            const p = document.createElement('div');
+            p.className = 'burst-flower';
+            p.innerHTML = Math.random() > 0.5 ? '🌸' : '🌻';
+            p.style.setProperty('--x', `${(Math.random() - 0.5) * 400}px`);
+            p.style.setProperty('--y', `${-Math.random() * 600}px`);
+            p.style.left = '50%'; p.style.top = '20%';
+            parent.appendChild(p);
+            setTimeout(() => p.remove(), 3000);
         }
 
-        function startSlideshows() {
-            setInterval(() => { rotate('slide-sarah'); rotate('slide-amal'); }, 3000);
-        }
-
-        function rotate(id) {
-            const imgs = document.getElementById(id).getElementsByTagName('img');
-            let activeIdx = 0;
-            for(let j=0; j<imgs.length; j++) {
-                if(imgs[j].classList.contains('active')) {
-                    activeIdx = j;
-                    imgs[j].classList.remove('active');
-                    break;
-                }
+        const data = {
+            sarah: {
+                name: "Lily Merah Muda - Sarah",
+                text: "Sarah, jika kemarin aku adalah duri yang tak sengaja melukai jemarimu, maafkan aku. Kita sudah berjalan sejauh ini. Di semester 6 nanti, saat dunia menagih seluruh sisa tenaga kita, aku tak ingin kita asing. Mari basuh debu yang lama, dan biarkan kita tumbuh lagi.",
+                imgs: ["sarah 1.jpeg", "sarah 2.jpeg", "kita 1.jpeg"]
+            },
+            amal: {
+                name: "Matahari Kuning - Amal",
+                text: "Amal, banyak kurangku yang kau dekap dengan sabar, meski aku seringkali hanya memberi bau tanah. Semester depan akan menagih waktu yang kian sempit. Namun mari kita saling memaafkan. Agar di dunia yang kotor ini, kita tetap punya satu sama lain untuk pulang.",
+                imgs: ["amal 1.jpeg", "amal 2.jpeg", "kita 2.jpeg"]
             }
-            imgs[(activeIdx + 1) % imgs.length].classList.add('active');
+        };
+
+        function openDetail(person) {
+            const modal = document.getElementById('detail-modal');
+            const d = data[person];
+            document.getElementById('modal-name').innerText = d.name;
+            document.getElementById('modal-text').innerText = d.text;
+            
+            const slideContainer = document.getElementById('modal-slideshow');
+            slideContainer.innerHTML = '';
+            d.imgs.forEach((img, idx) => {
+                const el = document.createElement('img');
+                el.src = img;
+                if(idx === 0) el.className = 'active';
+                slideContainer.appendChild(el);
+            });
+
+            modal.style.display = 'flex';
+            startModalSlideshow();
         }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+            clearInterval(window.modalInterval);
+        }
+
+        function startModalSlideshow() {
+            clearInterval(window.modalInterval);
+            window.modalInterval = setInterval(() => {
+                const imgs = document.querySelectorAll('#modal-slideshow img');
+                let activeIdx = 0;
+                imgs.forEach((img, idx) => {
+                    if(img.classList.contains('active')) activeIdx = idx;
+                    img.classList.remove('active');
+                });
+                imgs[(activeIdx + 1) % imgs.length].classList.add('active');
+            }, 2500);
+        }
+
+        document.getElementById('intro-stage').onclick = startIntro;
     </script>
 </body>
 </html>
