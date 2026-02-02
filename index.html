@@ -4,237 +4,242 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tumbuh Lebih Baik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,500;1,300&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #fdfaf5;
             --text: #4a4540;
-            --accent: #8b9a84; /* Sage green */
-            --dusty-rose: #d4a3a3;
+            --stem: #7b8a75;
+            --lily: #fff5f8;
+            --sun: #ffc107;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { 
-            background-color: var(--bg); 
-            color: var(--text);
-            font-family: 'Crimson Pro', serif;
-            overflow-x: hidden;
-            line-height: 1.6;
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Crimson Pro', serif; 
+            overflow: hidden; /* Lock scroll during intro */
         }
 
-        /* Background texture agar tidak flat */
-        body::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
-            opacity: 0.4; pointer-events: none; z-index: 999;
-        }
-
-        /* --- INTRO: BUNGA MEKAR PERLAHAN --- */
-        .intro-container {
+        /* --- INTRO SECTION --- */
+        #intro {
             height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            background: var(--bg); position: relative; z-index: 1000;
+            padding: 20px; cursor: pointer; position: relative;
         }
 
-        .flower-intro {
-            width: 2px; height: 0; background: var(--accent);
-            position: relative; transition: height 4s ease-in-out;
-        }
-        .flower-intro.grow { height: 150px; }
-
-        .bloom-head {
-            position: absolute; top: -30px; left: 50%; transform: translateX(-50%) scale(0);
-            width: 60px; height: 60px; transition: 3s 3.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .flower-intro.grow .bloom-head { transform: translateX(-50%) scale(1); }
-
-        .bloom-head span {
-            position: absolute; width: 100%; height: 100%;
-            border: 1px solid var(--dusty-rose); border-radius: 50% 0 50% 0;
-            transform-origin: center; opacity: 0.6;
+        .growth-container {
+            position: absolute; bottom: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; pointer-events: none;
         }
 
-        /* --- SECTION SYSTEM --- */
-        section { 
-            min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 40px;
-            opacity: 0; transform: translateY(20px); transition: 2s;
-        }
-        section.active { opacity: 1; transform: translateY(0); }
-
-        /* --- ENVELOPE & SURPRISE (SMOOTH) --- */
-        .envelope-wrapper {
-            position: relative; width: 300px; height: 200px;
-            cursor: pointer; perspective: 1000px;
+        /* Batang menjalar */
+        .vine {
+            width: 2px; height: 0; background: var(--stem);
+            position: relative; transition: height 2s ease;
         }
 
-        .envelope-base {
-            width: 100%; height: 100%; background: #f2ede4;
-            border: 1px solid #dcd3c1; position: relative; z-index: 2;
+        .intro-text {
+            font-size: 1.4rem; font-style: italic; opacity: 0;
+            transform: translateY(20px); transition: 2s;
+            max-width: 600px; z-index: 10;
+        }
+        .intro-text.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- TITLE SECTION --- */
+        #title-page {
+            height: 100vh; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .world-text {
+            font-family: 'Playfair Display', serif; font-size: 2.5rem;
+            cursor: pointer; transition: 1.5s; opacity: 0;
+        }
+        .world-text:hover { letter-spacing: 5px; opacity: 0.7; }
+
+        /* --- ENVELOPE --- */
+        #envelope-page {
+            height: 100vh; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .envelope {
+            width: 280px; height: 180px; background: #f2ede4;
+            border: 1px solid #dcd3c1; position: relative; cursor: pointer;
+        }
+        .envelope::after {
+            content: "Klik untuk membuka"; position: absolute; bottom: -40px;
+            width: 100%; text-align: center; font-size: 0.8rem; letter-spacing: 1px;
         }
 
-        .envelope-flap {
-            position: absolute; top: 0; width: 0; height: 0;
-            border-left: 150px solid transparent; border-right: 150px solid transparent;
-            border-top: 100px solid #e8e1d4; transform-origin: top;
-            transition: transform 1.2s; z-index: 4;
+        /* --- GARDEN (FLOWERS) --- */
+        #garden-page {
+            height: 100vh; display: none; flex-direction: column;
+            justify-content: center; align-items: center; gap: 50px;
+        }
+        .flowers-row { display: flex; gap: 80px; }
+        .flower-spot { text-align: center; cursor: pointer; }
+
+        /* SVG Bunga yang lebih cantik */
+        .flower-svg { width: 100px; height: 150px; overflow: visible; }
+        .petal { fill: white; stroke: #eee; }
+        .sun-petal { fill: var(--sun); }
+        
+        /* --- MODAL MESSAGE --- */
+        .modal {
+            position: fixed; inset: 0; background: var(--bg);
+            z-index: 100; display: none; padding: 40px;
+            overflow-y: auto; flex-direction: column; align-items: center;
+        }
+        .modal-content { max-width: 600px; text-align: center; }
+        .modal img { width: 100%; max-height: 400px; object-fit: cover; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        /* --- STATEMENTS & CLOSING --- */
+        #statement-page, #closing-page {
+            min-height: 100vh; display: none; flex-direction: column;
+            justify-content: center; align-items: center; padding: 40px; text-align: center;
         }
 
-        .letter-content {
-            position: absolute; bottom: 10px; left: 10px; right: 10px;
-            background: white; padding: 20px; font-size: 0.9rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); z-index: 3;
-            transition: transform 1.5s 0.8s, opacity 1s; transform: translateY(0);
+        /* UI ELEMENTS */
+        .btn-grow {
+            margin-top: 30px; padding: 12px 30px; border: 1px solid var(--text);
+            background: none; font-family: inherit; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem;
         }
+        .btn-grow:hover { background: var(--text); color: white; }
 
-        .open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
-        .open .letter-content { transform: translateY(-160px); }
-
-        /* Partikel Bunga saat amplop terbuka */
-        .flower-particle {
-            position: absolute; pointer-events: none; opacity: 0;
-            animation: floatUp 3s forwards; font-size: 20px;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
-        }
-
-        /* --- PHOTO CARDS --- */
-        .photo-frame {
-            background: white; padding: 10px 10px 40px 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            border: 1px solid #eee; margin: 15px;
-            max-width: 280px; transition: 1s;
-        }
-        .photo-frame img { width: 100%; height: 350px; object-fit: cover; }
-        .photo-frame p { font-family: 'Playfair Display', serif; font-style: italic; margin-top: 10px; }
-
-        .btn-next {
-            margin-top: 40px; padding: 10px 25px; border: 1px solid var(--text);
-            background: none; cursor: pointer; font-family: inherit;
-            letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem;
-            transition: 0.5s;
-        }
-        .btn-next:hover { background: var(--text); color: white; }
-
-        .hidden { display: none; }
+        .visible { display: flex !important; }
+        .fade-in { animation: fadeIn 2s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <audio id="lagu" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
+    <audio id="music"><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
 
-    <div class="intro-container" id="intro">
-        <div class="flower-intro" id="stem">
-            <div class="bloom-head" id="bloom">
-                <span style="transform: rotate(0deg)"></span>
-                <span style="transform: rotate(45deg)"></span>
-                <span style="transform: rotate(90deg)"></span>
-                <span style="transform: rotate(135deg)"></span>
+    <section id="intro">
+        <div class="growth-container"><div class="vine" id="vine"></div></div>
+        <p class="intro-text" id="text1">Kadang hidup tidak seindah yang dibayangkan.</p>
+        <p class="intro-text" id="text2">Tapi justru dari situ kita belajar.</p>
+        <p class="intro-text" id="text3">Untuk menerima dan tumbuh lebih baik.</p>
+        <p id="tap-hint" style="position:absolute; bottom:50px; font-size:0.8rem; opacity:0.5;">(Tap untuk bertumbuh)</p>
+    </section>
+
+    <section id="title-page">
+        <h1 class="world-text fade-in" onclick="goToEnvelope()">Untuk Kita, Dunia, dan Kotornya</h1>
+    </section>
+
+    <section id="envelope-page">
+        <div class="envelope fade-in" onclick="openGarden()"></div>
+    </section>
+
+    <section id="garden-page">
+        <h2 style="font-family:'Playfair Display'; font-style:italic;">Cinta dan Kotornya</h2>
+        <div class="flowers-row">
+            <div class="flower-spot" onclick="openModal('sarah')">
+                <svg class="flower-svg" viewBox="0 0 100 150">
+                    <path d="M50,150 Q50,100 50,50" stroke="#7b8a75" stroke-width="2" fill="none"/>
+                    <ellipse cx="50" cy="40" rx="15" ry="30" class="petal" />
+                    <ellipse cx="50" cy="40" rx="15" ry="30" class="petal" transform="rotate(45 50 40)" />
+                    <ellipse cx="50" cy="40" rx="15" ry="30" class="petal" transform="rotate(-45 50 40)" />
+                </svg>
+                <p>Lily (Sarah)</p>
+            </div>
+            <div class="flower-spot" onclick="openModal('amal')">
+                <svg class="flower-svg" viewBox="0 0 100 150">
+                    <path d="M50,150 Q50,100 50,50" stroke="#7b8a75" stroke-width="2" fill="none"/>
+                    <circle cx="50" cy="50" r="15" fill="#5d4037" />
+                    <ellipse cx="50" cy="25" rx="8" ry="20" class="sun-petal" />
+                    <ellipse cx="50" cy="75" rx="8" ry="20" class="sun-petal" />
+                    <ellipse cx="25" cy="50" rx="20" ry="8" class="sun-petal" />
+                    <ellipse cx="75" cy="50" rx="20" ry="8" class="sun-petal" />
+                </svg>
+                <p>Sunflower (Amal)</p>
             </div>
         </div>
-        <p style="margin-top: 60px; letter-spacing: 3px; font-style: italic;" id="introTxt">Ketuk untuk bertumbuh</p>
+    </section>
+
+    <div id="sarahModal" class="modal">
+        <div class="modal-content fade-in">
+            <h2>Untuk Sarah</h2>
+            <img src="sarah 1.jpeg" alt="Sarah">
+            <p>Sarah, kamu adalah sosok yang kuat meskipun kadang tidak terlihat. Semester kemarin pasti berat untukmu, dan aku minta maaf kalau ada kata-kata atau tindakan yang menyakitimu.</p>
+            <button class="btn-grow" onclick="goToStatement()">Tumbuh Lebih Baik</button>
+        </div>
     </div>
 
-    <div id="mainContent" class="hidden">
-        <section id="sec1">
-            <h2 style="font-family: 'Playfair Display'; font-weight: 300; font-size: 2.5rem;">Tapi, Diterima.</h2>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 30px;">
-                <div class="photo-frame"><img src="kita 1.jpeg"><p>Kita yang dulu..</p></div>
-                <div class="photo-frame"><img src="kita 2.jpeg"><p>..dan segala kotornya</p></div>
-            </div>
-            <button class="btn-next" onclick="showSec('sec2')">Lanjut</button>
-        </section>
-
-        <section id="sec2">
-            <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
-                <div class="envelope-flap"></div>
-                <div class="envelope-base"></div>
-                <div class="letter-content">
-                    <p>Semester kemarin rasanya berat ya bagi kita? Tapi nyatanya kita dikejar masa depan... Mari saling memaafkan agar langkah di Semester 6 lebih ringan.</p>
-                </div>
-            </div>
-            <p id="hint" style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">(Buka suratnya)</p>
-            <button class="btn-next hidden" id="btnTo3" onclick="showSec('sec3')">Mekar Bersama</button>
-        </section>
-
-        <section id="sec3">
-            <h2 style="font-family: 'Playfair Display'; margin-bottom: 30px;">Tumbuh Lebih Baik</h2>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-                <div class="photo-frame"><img src="sarah 1.jpeg"><p>Sarah</p></div>
-                <div class="photo-frame"><img src="amal 1.jpeg"><p>Amal</p></div>
-            </div>
-            <div style="max-width: 500px; text-align: center; margin-top: 30px;">
-                <p style="font-style: italic;">"Walau tak mudah, walau tak indah, tapi diterima."</p>
-                <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Ayo lalui Semester 6 ini dengan hati yang paling lapang.</p>
-            </div>
-        </section>
+    <div id="amalModal" class="modal">
+        <div class="modal-content fade-in">
+            <h2>Untuk Amal</h2>
+            <img src="amal 1.jpeg" alt="Amal">
+            <p>Amal, energi dan semangatmu selalu menginspirasi. Tapi aku tahu di balik itu semua, kamu juga punya beban dan lelahmu sendiri. Maaf kalau selama ini ada hal yang membuatmu tidak nyaman.</p>
+            <button class="btn-grow" onclick="goToStatement()">Tumbuh Lebih Baik</button>
+        </div>
     </div>
+
+    <section id="statement-page">
+        <div class="modal-content fade-in">
+            <p style="margin-bottom:20px;">Semester kemarin memang berat, dan semester ini mungkin tak lebih mudah.</p>
+            <p style="margin-bottom:20px;">Namun kita tidak sendirian.</p>
+            <p>Mari saling memaafkan, mari saling menguatkan.</p>
+            <button class="btn-grow" onclick="goToClosing()">Terus Bertumbuh</button>
+        </div>
+    </section>
+
+    <section id="closing-page">
+        <h1 class="fade-in" style="font-family:'Playfair Display'; font-size:2.5rem;">Mari kita terus bertumbuh</h1>
+        <p style="margin-top:20px; font-style:italic;">Bersama-sama.</p>
+    </section>
 
     <script>
-        const intro = document.getElementById('intro');
-        const stem = document.getElementById('stem');
-        const lagu = document.getElementById('lagu');
+        const music = document.getElementById('music');
+        const vine = document.getElementById('vine');
+        let step = 0;
 
-        // Intro Logic
-        intro.addEventListener('click', () => {
-            stem.classList.add('grow');
-            document.getElementById('introTxt').innerText = "Tunggu sebentar...";
-            lagu.play();
-            
-            setTimeout(() => {
-                intro.style.opacity = '0';
-                setTimeout(() => {
-                    intro.classList.add('hidden');
-                    document.getElementById('mainContent').classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('sec1').classList.add('active');
-                    }, 100);
-                }, 1500);
-            }, 7500); // Intro agak lama biar dramatis
+        // Intro Step System
+        document.getElementById('intro').addEventListener('click', () => {
+            step++;
+            if(step === 1) {
+                music.play();
+                vine.style.height = "40%";
+                document.getElementById('text1').classList.add('visible');
+            } else if(step === 2) {
+                vine.style.height = "70%";
+                document.getElementById('text2').classList.add('visible');
+            } else if(step === 3) {
+                vine.style.height = "100%";
+                document.getElementById('text3').classList.add('visible');
+                document.getElementById('tap-hint').innerText = "Klik sekali lagi...";
+            } else if(step === 4) {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('title-page').classList.add('visible');
+                document.body.style.overflow = 'auto';
+            }
         });
 
-        // Envelope Logic
-        function openEnvelope() {
-            const env = document.getElementById('envelope');
-            if(!env.classList.contains('open')) {
-                env.classList.add('open');
-                createFlowers();
-                document.getElementById('hint').classList.add('hidden');
-                setTimeout(() => {
-                    document.getElementById('btnTo3').classList.remove('hidden');
-                }, 2000);
-            }
+        function goToEnvelope() {
+            document.getElementById('title-page').style.display = 'none';
+            document.getElementById('envelope-page').classList.add('visible');
         }
 
-        // Particle Flowers Logic
-        function createFlowers() {
-            const container = document.getElementById('sec2');
-            const icons = ['🌸', '✨', '🌿', '🤍', '🌷'];
-            for(let i=0; i<15; i++) {
-                const f = document.createElement('div');
-                f.className = 'flower-particle';
-                f.innerText = icons[Math.floor(Math.random() * icons.length)];
-                f.style.left = '50%';
-                f.style.top = '50%';
-                f.style.setProperty('--x', (Math.random() * 400 - 200) + 'px');
-                f.style.setProperty('--y', (Math.random() * -300 - 100) + 'px');
-                container.appendChild(f);
-                setTimeout(() => f.remove(), 3000);
-            }
+        function openGarden() {
+            document.getElementById('envelope-page').style.display = 'none';
+            document.getElementById('garden-page').classList.add('visible');
         }
 
-        // Navigation
-        function showSec(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(id);
-            window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-            target.classList.add('active');
+        function openModal(person) {
+            document.getElementById(person + 'Modal').style.display = 'flex';
+        }
+
+        function goToStatement() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.getElementById('garden-page').style.display = 'none';
+            document.getElementById('statement-page').classList.add('visible');
+        }
+
+        function goToClosing() {
+            document.getElementById('statement-page').style.display = 'none';
+            document.getElementById('closing-page').classList.add('visible');
         }
     </script>
 </body>
