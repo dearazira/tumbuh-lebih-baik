@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Kita, Dunia, dan Kotornya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:italic&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nadin-brown: #7c6a46;
+            --nadin-beige: #f9f6f0;
+            --dusty-rose: #d4a373;
+        }
+
+        body {
+            background-color: var(--nadin-beige);
+            color: #5b574a;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Intro & Bunga --- */
+        #intro { text-align: center; position: absolute; width: 100%; z-index: 10; }
+        .flower-container { position: relative; width: 60px; height: 140px; margin: 0 auto 30px; }
+        .stem { position: absolute; bottom: 0; left: 50%; width: 2px; height: 0; background: #8fa17d; animation: growStem 2s forwards ease-in-out; }
+        .petal { position: absolute; top: 0; left: 50%; width: 30px; height: 50px; background: #e5d1b8; border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%; transform-origin: bottom center; opacity: 0; border: 1px solid rgba(140, 120, 81, 0.1); }
+        @keyframes growStem { to { height: 100px; } }
+        .p1, .p2, .p3, .p4, .p5 { animation: bloom 1.5s forwards ease-out 2s; }
+        .p1 { transform: translateX(-50%) rotate(0deg); }
+        .p2 { transform: translateX(-50%) rotate(72deg); }
+        .p3 { transform: translateX(-50%) rotate(144deg); }
+        .p4 { transform: translateX(-50%) rotate(216deg); }
+        .p5 { transform: translateX(-50%) rotate(288deg); }
+        @keyframes bloom { to { opacity: 1; } }
+        #lyric-text { font-family: 'Crimson Text', serif; font-size: 1.6rem; font-style: italic; height: 40px; transition: opacity 1s; }
+
+        /* --- Konten Utama --- */
+        .hidden { display: none; opacity: 0; }
+        #main-content { max-width: 900px; width: 90%; text-align: center; padding: 50px 0; }
+        header h1 { font-family: 'Crimson Text', serif; font-size: 2.2rem; font-weight: 400; color: var(--nadin-brown); margin: 10px 0; }
+        .pre-title { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; }
+
+        /* --- Slideshow Photo Wrapper --- */
+        .card-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 40px; }
+        .card { background: #fff; padding: 30px; width: 300px; border: 1px solid #ece9e0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        
+        .slideshow {
+            width: 120px; height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--nadin-brown);
+            position: relative;
+        }
+        .slideshow img {
+            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; top: 0; left: 0;
+            opacity: 0; transition: opacity 1s ease-in-out;
+            filter: sepia(20%);
+        }
+        .slideshow img.active { opacity: 1; }
+
+        .card h3 { font-family: 'Crimson Text', serif; font-size: 1.6rem; color: var(--nadin-brown); }
+        .card p { font-size: 0.85rem; line-height: 1.7; text-align: justify; color: #666; }
+
+        /* --- Footer & Musik --- */
+        button { background: none; border: 1px solid var(--nadin-brown); color: var(--nadin-brown); padding: 12px 25px; font-family: 'Crimson Text', serif; font-style: italic; cursor: pointer; transition: 0.5s; margin-top: 20px; }
+        button:hover { background: var(--nadin-brown); color: white; }
+        
+        #music-player { display: none; }
+    </style>
+</head>
+<body>
+
+    <audio id="lagu" loop>
+        <source src="tapi diterima.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="intro">
+        <div class="flower-container">
+            <div class="stem"></div>
+            <div class="petal p1"></div><div class="petal p2"></div>
+            <div class="petal p3"></div><div class="petal p4"></div>
+            <div class="petal p5"></div>
+        </div>
+        <p id="lyric-text">Klik di mana saja untuk mulai</p>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <header>
+            <p class="pre-title">Sebuah Rekonsiliasi</p>
+            <h1>Untuk Kita, Dunia, dan Kotornya</h1>
+        </header>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="slideshow" id="slides-sarah">
+                    <img src="sarah 1.jpeg" class="active">
+                    <img src="sarah 2.jpeg">
+                </div>
+                <h3>Untuk Sarah</h3>
+                <p>"Jika kemarin aku adalah duri yang tak sengaja melukai jemarimu, maafkan aku. Kita sudah berjalan sejauh ini, melewati musim yang barangkali tak selalu ramah. Di semester 6 nanti, mari tumbuh lagi tanpa benci."</p>
+            </div>
+
+            <div class="card">
+                <div class="slideshow" id="slides-amal">
+                    <img src="amal 1.jpeg" class="active">
+                    <img src="amal 2.jpeg">
+                </div>
+                <h3>Untuk Amal</h3>
+                <p>"Banyak kurangku yang kau dekap dengan sabar, meski aku seringkali hanya memberi bau tanah. Semester depan akan menagih waktu yang kian sempit, namun mari saling memaafkan agar kita tetap punya satu sama lain untuk pulang."</p>
+            </div>
+        </div>
+
+        <footer>
+            <button onclick="location.reload()">Maukah Kita Tumbuh Bersama Lagi?</button>
+        </footer>
+    </div>
+
+    <script>
+        const quotes = ["Sempurna tak ada padaku...", "Atas harumnya kasihmu...", "Segala kurangku...", "Tapi diterima."];
+        let i = 0;
+        let started = false;
+
+        // Mulai semuanya lewat klik (karena kebijakan autoplay browser)
+        document.body.addEventListener('click', function() {
+            if(!started) {
+                started = true;
+                document.getElementById('lagu').play();
+                runIntro();
+            }
+        });
+
+        function runIntro() {
+            if (i < quotes.length) {
+                document.getElementById('lyric-text').style.opacity = 0;
+                setTimeout(() => {
+                    document.getElementById('lyric-text').innerText = quotes[i];
+                    document.getElementById('lyric-text').style.opacity = 1;
+                    i++;
+                    setTimeout(runIntro, 3000);
+                }, 800);
+            } else {
+                showMain();
+            }
+        }
+
+        function showMain() {
+            document.getElementById('intro').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('main-content').classList.remove('hidden');
+                setTimeout(() => { document.getElementById('main-content').style.opacity = 1; }, 100);
+                startSlideshows();
+            }, 1000);
+        }
+
+        function startSlideshows() {
+            setInterval(() => {
+                rotateImages('slides-sarah');
+                rotateImages('slides-amal');
+            }, 3000);
+        }
+
+        function rotateImages(id) {
+            const container = document.getElementById(id);
+            const imgs = container.getElementsByTagName('img');
+            let activeIdx = 0;
+            for(let j=0; j<imgs.length; j++) {
+                if(imgs[j].classList.contains('active')) {
+                    activeIdx = j;
+                    imgs[j].classList.remove('active');
+                    break;
+                }
+            }
+            let nextIdx = (activeIdx + 1) % imgs.length;
+            imgs[nextIdx].classList.add('active');
+        }
+    </script>
+</body>
+</html>
