@@ -4,249 +4,238 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tumbuh Lebih Baik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,500;1,300&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap');
-
         :root {
-            --bg-color: #fdfaf5;
-            --text-color: #5a544e;
-            --accent: #a68b6d;
-            --sage: #828d7b;
+            --bg: #fdfaf5;
+            --text: #4a4540;
+            --accent: #8b9a84; /* Sage green */
+            --dusty-rose: #d4a3a3;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Crimson Text', serif; 
-            background: var(--bg-color); 
-            color: var(--text-color); 
+            background-color: var(--bg); 
+            color: var(--text);
+            font-family: 'Crimson Pro', serif;
             overflow-x: hidden;
-            scroll-behavior: smooth;
+            line-height: 1.6;
         }
 
-        /* Tekstur Kertas Tua */
-        .overlay {
+        /* Background texture agar tidak flat */
+        body::before {
+            content: "";
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            opacity: 0.3; pointer-events: none; z-index: 9999;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            opacity: 0.4; pointer-events: none; z-index: 999;
         }
 
-        /* 1. INTRO: BUNGA TUMBUH INTERAKTIF */
-        #intro-screen {
-            position: fixed; inset: 0; background: var(--bg-color);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 5000; transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+        /* --- INTRO: BUNGA MEKAR PERLAHAN --- */
+        .intro-container {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            background: var(--bg); position: relative; z-index: 1000;
         }
 
-        .garden-intro { position: relative; width: 200px; height: 300px; cursor: pointer; }
-        
-        .stem-intro { 
-            width: 4px; height: 0; background: var(--sage); margin: 0 auto; 
-            transition: height 5s ease-in-out; 
+        .flower-intro {
+            width: 2px; height: 0; background: var(--accent);
+            position: relative; transition: height 4s ease-in-out;
         }
-        .garden-intro.active .stem-intro { height: 200px; }
+        .flower-intro.grow { height: 150px; }
 
-        .bloom-intro { 
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%) scale(0);
-            transition: transform 3s 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; justify-content: center; align-items: center;
+        .bloom-head {
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%) scale(0);
+            width: 60px; height: 60px; transition: 3s 3.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .garden-intro.active .bloom-intro { transform: translateX(-50%) scale(1.5); }
+        .flower-intro.grow .bloom-head { transform: translateX(-50%) scale(1); }
 
-        .petal-intro {
-            position: absolute; width: 30px; height: 60px; background: #fff;
-            border: 1px solid #f0e0d0; border-radius: 50% 50% 10% 10%;
-            transform-origin: bottom center; opacity: 0.9;
+        .bloom-head span {
+            position: absolute; width: 100%; height: 100%;
+            border: 1px solid var(--dusty-rose); border-radius: 50% 0 50% 0;
+            transform-origin: center; opacity: 0.6;
         }
 
-        .start-text { 
-            margin-top: 50px; opacity: 0; transition: 2s 7s; 
-            font-style: italic; letter-spacing: 2px; 
-        }
-        .garden-intro.active + .start-text { opacity: 1; }
-
-        /* 2. SECTION STYLING */
-        .section {
+        /* --- SECTION SYSTEM --- */
+        section { 
             min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 50px 20px;
-            opacity: 0; transform: translateY(30px); transition: all 2s;
+            justify-content: center; align-items: center; padding: 40px;
+            opacity: 0; transform: translateY(20px); transition: 2s;
         }
-        .section.visible { opacity: 1; transform: translateY(0); }
+        section.active { opacity: 1; transform: translateY(0); }
 
-        /* 3. ENVELOPE & SURPRISE BLOOM */
-        .envelope-container { position: relative; width: 350px; height: 250px; margin: 50px 0; }
-        
-        .envelope {
-            width: 100%; height: 100%; background: #ece4d8; border: 1px solid #d4c5b3;
-            position: relative; cursor: pointer; z-index: 10;
-        }
-        
-        .flap {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #e4dacb; clip-path: polygon(0 0, 50% 60%, 100% 0);
-            z-index: 12; transition: transform 1.5s; transform-origin: top;
-        }
-        
-        .letter {
-            position: absolute; bottom: 5px; left: 5%; width: 90%; height: 90%;
-            background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            transition: transform 1.5s 1s; z-index: 11; font-size: 14px;
+        /* --- ENVELOPE & SURPRISE (SMOOTH) --- */
+        .envelope-wrapper {
+            position: relative; width: 300px; height: 200px;
+            cursor: pointer; perspective: 1000px;
         }
 
-        .opened .flap { transform: rotateX(-180deg); }
-        .opened .letter { transform: translateY(-120px); height: auto; }
-
-        /* Bunga sekeliling amplop */
-        .surprise-flower {
-            position: absolute; opacity: 0; transition: 2s 2s; transform: scale(0);
+        .envelope-base {
+            width: 100%; height: 100%; background: #f2ede4;
+            border: 1px solid #dcd3c1; position: relative; z-index: 2;
         }
-        .opened ~ .surprise-flower { opacity: 1; transform: scale(1); }
 
-        /* 4. PHOTO GRID VIBES */
-        .photo-card {
-            width: 100%; max-width: 400px; padding: 15px; background: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transform: rotate(-2deg);
-            margin: 20px; transition: 1s;
+        .envelope-flap {
+            position: absolute; top: 0; width: 0; height: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-top: 100px solid #e8e1d4; transform-origin: top;
+            transition: transform 1.2s; z-index: 4;
         }
-        .photo-card:nth-child(even) { transform: rotate(2deg); }
-        .photo-card img { width: 100%; filter: sepia(20%) contrast(90%); }
-        .photo-card p { font-family: 'Dancing Script'; font-size: 1.5rem; margin-top: 10px; text-align: center; }
 
-        /* BUTTONS */
-        .nav-btn {
-            padding: 12px 30px; border: 1px solid var(--accent);
-            background: transparent; color: var(--accent); cursor: pointer;
-            margin-top: 30px; transition: 0.5s;
+        .letter-content {
+            position: absolute; bottom: 10px; left: 10px; right: 10px;
+            background: white; padding: 20px; font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); z-index: 3;
+            transition: transform 1.5s 0.8s, opacity 1s; transform: translateY(0);
         }
-        .nav-btn:hover { background: var(--accent); color: #fff; }
 
-        #audio-status {
-            position: fixed; bottom: 20px; right: 20px; font-size: 10px;
-            letter-spacing: 2px; color: var(--accent); z-index: 10000;
+        .open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+        .open .letter-content { transform: translateY(-160px); }
+
+        /* Partikel Bunga saat amplop terbuka */
+        .flower-particle {
+            position: absolute; pointer-events: none; opacity: 0;
+            animation: floatUp 3s forwards; font-size: 20px;
         }
+
+        @keyframes floatUp {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- PHOTO CARDS --- */
+        .photo-frame {
+            background: white; padding: 10px 10px 40px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid #eee; margin: 15px;
+            max-width: 280px; transition: 1s;
+        }
+        .photo-frame img { width: 100%; height: 350px; object-fit: cover; }
+        .photo-frame p { font-family: 'Playfair Display', serif; font-style: italic; margin-top: 10px; }
+
+        .btn-next {
+            margin-top: 40px; padding: 10px 25px; border: 1px solid var(--text);
+            background: none; cursor: pointer; font-family: inherit;
+            letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem;
+            transition: 0.5s;
+        }
+        .btn-next:hover { background: var(--text); color: white; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="overlay"></div>
-    <audio id="bgMusic" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
-    <div id="audio-status">TAP UNTUK MUSIK</div>
+    <audio id="lagu" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
 
-    <div id="intro-screen">
-        <div class="garden-intro" id="gardenTrigger">
-            <div class="stem-intro"></div>
-            <div class="bloom-intro" id="introBloom"></div>
+    <div class="intro-container" id="intro">
+        <div class="flower-intro" id="stem">
+            <div class="bloom-head" id="bloom">
+                <span style="transform: rotate(0deg)"></span>
+                <span style="transform: rotate(45deg)"></span>
+                <span style="transform: rotate(90deg)"></span>
+                <span style="transform: rotate(135deg)"></span>
+            </div>
         </div>
-        <p class="start-text">Sentuh bunganya untuk memulai...</p>
-        <button class="nav-btn" id="startBtn" style="display: none; margin-top: 20px;">Mulai Perjalanan</button>
+        <p style="margin-top: 60px; letter-spacing: 3px; font-style: italic;" id="introTxt">Ketuk untuk bertumbuh</p>
     </div>
 
-    <div id="main-content">
-        <section class="section" id="sec1">
-            <h1 style="font-size: 3rem; margin-bottom: 20px;">Untuk Sarah dan Amal</h1>
+    <div id="mainContent" class="hidden">
+        <section id="sec1">
+            <h2 style="font-family: 'Playfair Display'; font-weight: 300; font-size: 2.5rem;">Tapi, Diterima.</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 30px;">
+                <div class="photo-frame"><img src="kita 1.jpeg"><p>Kita yang dulu..</p></div>
+                <div class="photo-frame"><img src="kita 2.jpeg"><p>..dan segala kotornya</p></div>
+            </div>
+            <button class="btn-next" onclick="showSec('sec2')">Lanjut</button>
+        </section>
+
+        <section id="sec2">
+            <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+                <div class="envelope-flap"></div>
+                <div class="envelope-base"></div>
+                <div class="letter-content">
+                    <p>Semester kemarin rasanya berat ya bagi kita? Tapi nyatanya kita dikejar masa depan... Mari saling memaafkan agar langkah di Semester 6 lebih ringan.</p>
+                </div>
+            </div>
+            <p id="hint" style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">(Buka suratnya)</p>
+            <button class="btn-next hidden" id="btnTo3" onclick="showSec('sec3')">Mekar Bersama</button>
+        </section>
+
+        <section id="sec3">
+            <h2 style="font-family: 'Playfair Display'; margin-bottom: 30px;">Tumbuh Lebih Baik</h2>
             <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-                <div class="photo-card"><img src="kita 1.jpeg"><p>Kita yang dulu...</p></div>
-                <div class="photo-card"><img src="kita 2.jpeg"><p>Dan kita yang bertahan.</p></div>
+                <div class="photo-frame"><img src="sarah 1.jpeg"><p>Sarah</p></div>
+                <div class="photo-frame"><img src="amal 1.jpeg"><p>Amal</p></div>
             </div>
-            <button class="nav-btn" onclick="nextSection('sec2')">Lanjut</button>
-        </section>
-
-        <section class="section" id="sec2">
-            <h2 style="font-style: italic; margin-bottom: 20px;">Sebuah Pesan Kecil</h2>
-            <div class="envelope-container">
-                <div class="envelope" id="envelopeTrigger">
-                    <div class="flap"></div>
-                    <div class="letter">
-                        <p>Semester kemarin rasanya berat ya bagi kita? <br><br>
-                        Tapi nyatanya, semester 6 mungkin akan lebih gaduh. Kita dikejar masa depan, dikejar ekspektasi. <br><br>
-                        Tapi sebelum melangkah lebih jauh, mari kita saling memaafkan. Untuk segala salah yang lalu, agar kita tumbuh lebih ringan.</p>
-                    </div>
-                </div>
-                <div class="surprise-flower" style="top:-50px; left:-50px; font-size:40px;">🌸</div>
-                <div class="surprise-flower" style="top:-50px; right:-50px; font-size:40px;">🌻</div>
-                <div class="surprise-flower" style="bottom:-30px; left:50%; font-size:40px;">🌷</div>
+            <div style="max-width: 500px; text-align: center; margin-top: 30px;">
+                <p style="font-style: italic;">"Walau tak mudah, walau tak indah, tapi diterima."</p>
+                <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Ayo lalui Semester 6 ini dengan hati yang paling lapang.</p>
             </div>
-            <p style="font-size: 0.9rem; color: #888;">(Klik amplopnya)</p>
-            <button class="nav-btn" id="toFlowerBtn" style="display:none;" onclick="nextSection('sec3')">Melihat Kita Mekar</button>
-        </section>
-
-        <section class="section" id="sec3">
-            <h2 style="margin-bottom: 50px;">Mari Mekar Bersama</h2>
-            <div style="display: flex; gap: 50px; flex-wrap: wrap; justify-content: center;">
-                <div class="photo-card" style="max-width: 250px;">
-                    <img src="sarah 1.jpeg">
-                    <p>Sarah</p>
-                    <div style="font-size: 30px; text-align: center;">🌷</div>
-                </div>
-                <div class="photo-card" style="max-width: 250px;">
-                    <img src="amal 1.jpeg">
-                    <p>Amal</p>
-                    <div style="font-size: 30px; text-align: center;">🌻</div>
-                </div>
-            </div>
-            <div style="max-width: 600px; text-align: center; margin-top: 40px; line-height: 2;">
-                <p>Masa depan memang mengejar, tapi jangan biarkan ia membunuh warnamu. <br>
-                Semester 6 ini, ayo kita hadapi dengan hati yang lebih lapang. <br>
-                Apapun yang terjadi, kita tetap diterima.</p>
-            </div>
-            <button class="nav-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">Kembali ke Awal</button>
         </section>
     </div>
 
     <script>
-        const music = document.getElementById('bgMusic');
-        const introBloom = document.getElementById('introBloom');
+        const intro = document.getElementById('intro');
+        const stem = document.getElementById('stem');
+        const lagu = document.getElementById('lagu');
 
-        // 1. Inisialisasi Kelopak Bunga Intro
-        for(let i=0; i<8; i++) {
-            const petal = document.createElement('div');
-            petal.className = 'petal-intro';
-            petal.style.transform = `rotate(${i * 45}deg)`;
-            introBloom.appendChild(petal);
-        }
-
-        // 2. Animasi Intro Tumbuh
-        document.getElementById('gardenTrigger').onclick = function() {
-            this.classList.add('active');
-            music.play().catch(() => { document.getElementById('audio-status').innerText = "KLIK MANA SAJA UNTUK MUSIK"; });
+        // Intro Logic
+        intro.addEventListener('click', () => {
+            stem.classList.add('grow');
+            document.getElementById('introTxt').innerText = "Tunggu sebentar...";
+            lagu.play();
+            
             setTimeout(() => {
-                document.getElementById('startBtn').style.display = 'block';
-            }, 8000);
-        };
+                intro.style.opacity = '0';
+                setTimeout(() => {
+                    intro.classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                    setTimeout(() => {
+                        document.getElementById('sec1').classList.add('active');
+                    }, 100);
+                }, 1500);
+            }, 7500); // Intro agak lama biar dramatis
+        });
 
-        // 3. Mulai Perjalanan
-        document.getElementById('startBtn').onclick = () => {
-            document.getElementById('intro-screen').classList.add('fade-out');
-            setTimeout(() => {
-                document.getElementById('intro-screen').style.display = 'none';
-                document.getElementById('sec1').classList.add('visible');
-            }, 2500);
-        };
-
-        // 4. Buka Amplop
-        document.getElementById('envelopeTrigger').onclick = function() {
-            this.parentElement.classList.add('opened');
-            setTimeout(() => {
-                document.getElementById('toFlowerBtn').style.display = 'block';
-            }, 3000);
-        };
-
-        // 5. Navigasi Section
-        function nextSection(id) {
-            const next = document.getElementById(id);
-            next.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                next.classList.add('visible');
-            }, 800);
-        }
-
-        // Interaksi Audio Global
-        document.body.addEventListener('click', () => {
-            if(music.paused) {
-                music.play();
-                document.getElementById('audio-status').innerText = "🎵 Tapi Diterima";
+        // Envelope Logic
+        function openEnvelope() {
+            const env = document.getElementById('envelope');
+            if(!env.classList.contains('open')) {
+                env.classList.add('open');
+                createFlowers();
+                document.getElementById('hint').classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('btnTo3').classList.remove('hidden');
+                }, 2000);
             }
-        }, { once: true });
+        }
+
+        // Particle Flowers Logic
+        function createFlowers() {
+            const container = document.getElementById('sec2');
+            const icons = ['🌸', '✨', '🌿', '🤍', '🌷'];
+            for(let i=0; i<15; i++) {
+                const f = document.createElement('div');
+                f.className = 'flower-particle';
+                f.innerText = icons[Math.floor(Math.random() * icons.length)];
+                f.style.left = '50%';
+                f.style.top = '50%';
+                f.style.setProperty('--x', (Math.random() * 400 - 200) + 'px');
+                f.style.setProperty('--y', (Math.random() * -300 - 100) + 'px');
+                container.appendChild(f);
+                setTimeout(() => f.remove(), 3000);
+            }
+        }
+
+        // Navigation
+        function showSec(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(id);
+            window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+            target.classList.add('active');
+        }
     </script>
 </body>
 </html>
