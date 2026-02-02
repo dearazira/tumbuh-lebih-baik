@@ -19,28 +19,30 @@
             overflow: hidden; height: 100vh;
         }
 
+        /* --- STAGE 1: INTRO BUNGA MENJALAR --- */
         .screen {
             position: fixed; inset: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center; text-align: center;
-            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
-            padding: 20px;
+            transition: opacity 1.5s ease-in-out; padding: 20px; z-index: 10;
         }
 
-        .hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+        .hidden { opacity: 0; pointer-events: none; }
 
-        /* --- STAGE 1: BUNGA MENJALAR --- */
-        .vine-svg { width: 200px; height: 300px; overflow: visible; }
+        .vine-svg { width: 250px; height: 350px; overflow: visible; }
         .vine-path { 
-            fill: none; stroke: #8fa17d; stroke-width: 3; 
+            fill: none; stroke: #8fa17d; stroke-width: 2.5; 
             stroke-dasharray: 1000; stroke-dashoffset: 1000; 
-            stroke-linecap: round;
+            stroke-linecap: round; stroke-linejoin: round;
         }
-        .animate-vine { animation: growVine 8s forwards cubic-bezier(0.4, 0, 0.2, 1); }
+        .animate-vine { animation: growVine 7s forwards cubic-bezier(0.45, 0.05, 0.55, 0.95); }
         @keyframes growVine { to { stroke-dashoffset: 0; } }
 
-        .hint { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 30px; opacity: 0.5; }
+        .lyrics-box {
+            font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem;
+            margin-top: 20px; min-height: 40px; transition: opacity 1s;
+        }
 
-        /* --- STAGE 2: AMPLOP --- */
+        /* --- STAGE 2: AMPLOP & SURAT --- */
         .envelope-wrapper { position: relative; width: 300px; height: 180px; background: #f2ede4; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
         .envelope-top { 
             position: absolute; top: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; 
@@ -50,139 +52,162 @@
 
         .letter { 
             position: absolute; bottom: 5px; left: 5px; right: 5px; background: white; 
-            height: 160px; transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1), height 2s; 
-            z-index: 5; padding: 20px; overflow-y: auto; box-sizing: border-box;
+            height: 160px; transition: transform 2.5s cubic-bezier(0.19, 1, 0.22, 1), height 2s; 
+            z-index: 5; padding: 30px 20px; overflow-y: auto; box-sizing: border-box;
         }
-        .open .letter { transform: translateY(-300px); height: 1000px; width: 340px; left: -20px; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
+        .open .letter { transform: translateY(-320px); height: 900px; width: 340px; left: -20px; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
 
-        .burst { position: absolute; pointer-events: none; z-index: 15; animation: fly 3s forwards; }
+        /* Efek Bunga Keluar dari Amplop */
+        .burst { position: absolute; pointer-events: none; z-index: 15; animation: fly 3s forwards; font-size: 20px; }
         @keyframes fly { to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; } }
 
-        /* --- DETAILS (MODAL) --- */
+        /* Bunga Detail (Lily & Matahari) */
+        .detail-flowers { 
+            display: flex; gap: 30px; justify-content: center; margin-top: 30px; 
+            opacity: 0; transform: translateY(20px); transition: 2s 1.5s;
+        }
+        .open .detail-flowers { opacity: 1; transform: translateY(0); }
+
+        .f-item { cursor: pointer; transition: 0.4s; text-align: center; }
+        .f-item:hover { transform: scale(1.1); }
+        .f-icon { font-size: 45px; display: block; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }
+
+        /* --- MODAL DETAIL --- */
         #modal { 
             position: fixed; inset: 0; background: var(--nadin-beige); z-index: 300; 
             display: flex; align-items: center; justify-content: center; 
-            transition: 0.5s; opacity: 0; pointer-events: none;
+            transition: 0.6s; opacity: 0; pointer-events: none;
         }
         #modal.active { opacity: 1; pointer-events: auto; }
         .modal-inner { max-width: 400px; width: 90%; text-align: center; }
-        .ss-container { width: 100%; height: 250px; position: relative; overflow: hidden; margin: 20px 0; border: 1px solid #ddd; }
-        .ss-container img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: 1s; }
+        .ss-container { width: 100%; height: 280px; position: relative; overflow: hidden; margin: 20px 0; border: 1px solid #eee; }
+        .ss-container img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 0; transition: 1.2s; }
         .ss-container img.active { opacity: 1; }
 
-        /* --- STYLE --- */
-        h1, h2, h3 { font-family: 'Crimson Text', serif; font-weight: 400; color: var(--nadin-brown); }
-        p { line-height: 1.6; font-size: 0.9rem; }
-        .flower-btn { cursor: pointer; padding: 20px; border: 1px solid #eee; transition: 0.3s; margin: 10px; flex: 1; }
-        .flower-btn:hover { background: #fff; transform: scale(1.05); }
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Crimson Text', serif; font-size: 1.8rem; color: var(--nadin-brown); font-weight: 400; }
+        .hint { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 30px; opacity: 0.4; }
+        .close-btn { background: var(--nadin-brown); color: white; border: none; padding: 12px 25px; cursor: pointer; font-family: 'Crimson Text'; font-style: italic; margin-top: 20px; }
     </style>
 </head>
-<body onclick="handleClick()">
+<body onclick="handleAction()">
 
-    <audio id="lagu" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
+    <audio id="back-sound" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
 
     <div id="stage1" class="screen">
         <svg class="vine-svg" viewBox="0 0 100 200">
-            <path id="vine1" class="vine-path" d="M50,200 C50,150 20,150 20,100 C20,50 80,50 80,20" />
-            <path id="vine2" class="vine-path" d="M50,160 C70,140 85,120 75,90" />
-            <path id="vine3" class="vine-path" d="M35,130 C10,110 15,80 45,65" />
+            <path class="vine-path" d="M50,200 Q50,150 50,130 T50,80 Q50,40 70,20" />
+            <path class="vine-path" d="M50,140 Q30,120 35,90 Q40,60 55,40" />
+            <path class="vine-path" d="M52,110 Q75,100 70,70 Q65,45 50,30" />
         </svg>
-        <h2 id="lyrics" style="font-style: italic; margin-top: 20px; opacity: 0; transition: 1s;"></h2>
+        <div id="lyrics-text" class="lyrics-box" style="opacity: 0;"></div>
         <p class="hint">Ketuk untuk menumbuhkan...</p>
     </div>
 
     <div id="stage2" class="screen hidden">
-        <div class="envelope-wrapper" id="env">
+        <div class="envelope-wrapper" id="envelope">
             <div class="envelope-top"></div>
             <div class="letter">
-                <div id="letter-inner" style="opacity: 0; transition: 2s;">
-                    <p style="font-size: 0.7rem; letter-spacing: 2px;">SURAT TERBUKA</p>
+                <div id="letter-content" style="opacity: 0; transition: 2s;">
+                    <p style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.6;">TERUNTUK SAHABATKU</p>
                     <h1>Untuk Kita, Dunia, dan Kotornya</h1>
-                    <p style="font-style: italic;">"Segala kurangku, tapi diterima."</p>
-                    <div style="display: flex; margin-top: 30px;">
-                        <div class="flower-btn" onclick="openMsg('sarah')">🌸<br>Lily (Sarah)</div>
-                        <div class="flower-btn" onclick="openMsg('amal')">🌻<br>Matahari (Amal)</div>
+                    <p style="font-style: italic; color: var(--nadin-brown);">"Banyak kurangku, tapi diterima."</p>
+                    
+                    <div class="detail-flowers">
+                        <div class="f-item" onclick="openMessage('sarah')">
+                            <span class="f-icon">🌸</span>
+                            <small>Sarah</small>
+                        </div>
+                        <div class="f-item" onclick="openMessage('amal')">
+                            <span class="f-icon">🌻</span>
+                            <small>Amal</small>
+                        </div>
                     </div>
-                    <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <p>Semester 6 mungkin menagih banyak hal, tapi mari tumbuh bersama lagi. Jangan biarkan kita asing.</p>
-                        <p style="font-size: 0.8rem; opacity: 0.6;">(Ketuk bunga untuk detail)</p>
+
+                    <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <p style="font-size: 0.85rem; line-height: 1.7;">Semester 6 menanti kita dengan segala riuhnya. Mari mekar kembali, memaafkan segala kurang, dan tumbuh lebih baik.</p>
+                        <p class="hint">Ketuk bunga untuk melihat pesan</p>
                     </div>
                 </div>
             </div>
         </div>
-        <p class="hint" id="env-hint">Ketuk untuk membuka surat...</p>
+        <p class="hint" id="env-hint">Ketuk untuk membuka amplop...</p>
     </div>
 
     <div id="modal">
         <div class="modal-inner">
-            <h2 id="m-name"></h2>
-            <div class="ss-container" id="m-ss"></div>
-            <p id="m-text"></p>
-            <button onclick="closeMsg()" style="background: var(--nadin-brown); color: white; border: none; padding: 10px 20px; cursor: pointer;">Kembali</button>
+            <h2 id="modal-title" style="font-family: 'Crimson Text'; font-weight: 400;"></h2>
+            <div class="ss-container" id="slideshow-box"></div>
+            <p id="modal-desc" style="font-size: 0.9rem; text-align: justify;"></p>
+            <button class="close-btn" onclick="closeMessage()">Kembali</button>
         </div>
     </div>
 
     <script>
-        let step = 0;
-        const quotes = ["Sempurna tak ada padaku...", "Atas harumnya kasihmu...", "Segala kurangku...", "Tapi diterima."];
+        let stage = 0;
+        const lyrics = ["Sempurna tak ada padaku...", "Atas harumnya kasihmu...", "Segala kurangku...", "Tapi diterima."];
         
-        function handleClick() {
-            if (step === 0) {
-                document.getElementById('lagu').play();
-                document.querySelectorAll('.vine-path').forEach(v => v.classList.add('animate-vine'));
-                showLyrics();
-                step = 1;
-            } else if (step === 2) {
+        function handleAction() {
+            const audio = document.getElementById('back-sound');
+            
+            if (stage === 0) {
+                audio.play().catch(e => console.log("Audio play blocked"));
+                document.querySelectorAll('.vine-path').forEach(p => p.classList.add('animate-vine'));
+                runLyrics();
+                stage = 1;
+            } else if (stage === 2) {
                 openEnvelope();
-                step = 3;
+                stage = 3;
             }
         }
 
-        function showLyrics() {
+        function runLyrics() {
             let i = 0;
-            const lEl = document.getElementById('lyrics');
-            const interval = setInterval(() => {
-                lEl.style.opacity = 0;
+            const box = document.getElementById('lyrics-text');
+            const timer = setInterval(() => {
+                box.style.opacity = 0;
                 setTimeout(() => {
-                    if (i < quotes.length) {
-                        lEl.innerText = quotes[i];
-                        lEl.style.opacity = 1;
+                    if (i < lyrics.length) {
+                        box.innerText = lyrics[i];
+                        box.style.opacity = 1;
                         i++;
                     } else {
-                        clearInterval(interval);
-                        setTimeout(toStage2, 2000);
+                        clearInterval(timer);
+                        setTimeout(showStage2, 2000);
                     }
-                }, 1000);
-            }, 3500);
+                }, 800);
+            }, 3000);
         }
 
-        function toStage2() {
-            document.getElementById('stage1').classList.add('hidden');
+        function showStage2() {
+            document.getElementById('stage1').style.opacity = 0;
             setTimeout(() => {
-                document.getElementById('stage1').style.display = 'none';
+                document.getElementById('stage1').classList.add('hidden');
                 document.getElementById('stage2').classList.remove('hidden');
-                step = 2;
+                stage = 2;
             }, 1500);
         }
 
         function openEnvelope() {
-            document.getElementById('env').classList.add('open');
-            document.getElementById('env-hint').style.display = 'none';
-            // Burst particles
-            for(let j=0; j<25; j++) {
-                createP();
+            document.getElementById('envelope').classList.add('open');
+            document.getElementById('env-hint').style.opacity = 0;
+            
+            // Efek Bunga Bertebaran
+            for(let j=0; j<20; j++) {
+                createParticle();
             }
+            
             setTimeout(() => {
-                document.getElementById('letter-inner').style.opacity = 1;
-            }, 1500);
+                document.getElementById('letter-content').style.opacity = 1;
+            }, 1000);
         }
 
-        function createP() {
+        function createParticle() {
             const p = document.createElement('div');
             p.className = 'burst';
             p.innerHTML = Math.random() > 0.5 ? '🌸' : '🌻';
             p.style.setProperty('--x', `${(Math.random()-0.5)*400}px`);
-            p.style.setProperty('--y', `${-Math.random()*500}px`);
+            p.style.setProperty('--y', `${-Math.random()*600}px`);
             p.style.left = '50%'; p.style.top = '40%';
             document.getElementById('stage2').appendChild(p);
             setTimeout(() => p.remove(), 3000);
@@ -190,42 +215,48 @@
 
         const data = {
             sarah: {
-                n: "Sarah - Lily Merah Muda",
-                t: "Sarah, jika kemarin aku adalah duri yang melukaimu, maafkan aku. Di semester 6 nanti, aku tak ingin kita asing. Mari tumbuh lagi.",
-                i: ["sarah 1.jpeg", "sarah 2.jpeg", "kita 1.jpeg"]
+                title: "Lily Merah Muda - Sarah",
+                msg: "Sarah, jika kemarin aku adalah duri yang melukaimu, maafkan aku. Di semester 6 nanti, aku tak ingin kita asing. Mari tumbuh lagi dari kotornya dunia.",
+                imgs: ["sarah 1.jpeg", "sarah 2.jpeg", "kita 1.jpeg"]
             },
             amal: {
-                n: "Amal - Matahari Kuning",
-                t: "Amal, banyak kurangku yang kau dekap sabar. Mari saling memaafkan agar di dunia yang kotor ini, kita tetap punya tempat pulang.",
-                i: ["amal 1.jpeg", "amal 2.jpeg", "kita 2.jpeg"]
+                title: "Matahari Kuning - Amal",
+                msg: "Amal, banyak kurangku yang kau dekap dengan sabar. Mari saling memaafkan agar kita tetap punya satu sama lain untuk pulang. Mari tumbuh lebih kuat.",
+                imgs: ["amal 1.jpeg", "amal 2.jpeg", "kita 2.jpeg"]
             }
         };
 
-        function openMsg(p) {
-            const m = document.getElementById('modal');
-            const d = data[p];
-            document.getElementById('m-name').innerText = d.n;
-            document.getElementById('m-text').innerText = d.t;
-            const ss = document.getElementById('m-ss');
-            ss.innerHTML = '';
-            d.i.forEach((src, idx) => {
+        function openMessage(key) {
+            const modal = document.getElementById('modal');
+            const d = data[key];
+            document.getElementById('modal-title').innerText = d.title;
+            document.getElementById('modal-desc').innerText = d.msg;
+            
+            const box = document.getElementById('slideshow-box');
+            box.innerHTML = '';
+            d.imgs.forEach((src, idx) => {
                 const img = document.createElement('img');
                 img.src = src;
-                if(idx===0) img.className = 'active';
-                ss.appendChild(img);
+                if(idx === 0) img.className = 'active';
+                box.appendChild(img);
             });
-            m.classList.add('active');
-            startSS();
+
+            modal.classList.add('active');
+            startSlides();
         }
 
-        function closeMsg() { document.getElementById('modal').classList.remove('active'); clearInterval(window.ssInt); }
+        function closeMessage() {
+            document.getElementById('modal').classList.remove('active');
+            clearInterval(window.ssTimer);
+        }
 
-        function startSS() {
-            window.ssInt = setInterval(() => {
-                const imgs = document.querySelectorAll('#m-ss img');
-                let cur = 0;
-                imgs.forEach((img, idx) => { if(img.classList.contains('active')) cur = idx; img.classList.remove('active'); });
-                imgs[(cur+1)%imgs.length].classList.add('active');
+        function startSlides() {
+            clearInterval(window.ssTimer);
+            window.ssTimer = setInterval(() => {
+                const imgs = document.querySelectorAll('#slideshow-box img');
+                let act = 0;
+                imgs.forEach((img, i) => { if(img.classList.contains('active')) act = i; img.classList.remove('active'); });
+                imgs[(act + 1) % imgs.length].classList.add('active');
             }, 2500);
         }
     </script>
