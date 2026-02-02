@@ -7,271 +7,246 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap');
 
+        :root {
+            --bg-color: #fdfaf5;
+            --text-color: #5a544e;
+            --accent: #a68b6d;
+            --sage: #828d7b;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
             font-family: 'Crimson Text', serif; 
-            background: #fdfaf5; 
-            color: #4a443f; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
             overflow-x: hidden;
-            line-height: 1.6;
+            scroll-behavior: smooth;
         }
 
-        /* Tekstur Kertas Beras */
-        body::before {
-            content: "";
+        /* Tekstur Kertas Tua */
+        .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            opacity: 0.4; pointer-events: none; z-index: 9999;
+            opacity: 0.3; pointer-events: none; z-index: 9999;
         }
 
-        /* INTRO OVERLAY */
-        .intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: #fdfaf5; display: flex; justify-content: center; align-items: center;
-            z-index: 2000; transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .intro-screen.fade-out { opacity: 0; pointer-events: none; }
-
-        .start-btn {
-            padding: 15px 40px; background: transparent; border: 1px solid #a68b6d;
-            color: #a68b6d; font-family: 'Crimson Text', serif; font-size: 18px;
-            letter-spacing: 2px; cursor: pointer; transition: 0.5s;
-        }
-        .start-btn:hover { background: #a68b6d; color: white; letter-spacing: 4px; }
-
-        /* CONTENT WRAPPER */
-        .page-wrapper {
-            opacity: 0; transition: opacity 2s ease; padding: 20px;
-        }
-        .page-wrapper.visible { opacity: 1; }
-
-        .section { 
-            min-height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; padding: 100px 20px;
-            transition: all 1.5s ease;
+        /* 1. INTRO: BUNGA TUMBUH INTERAKTIF */
+        #intro-screen {
+            position: fixed; inset: 0; background: var(--bg-color);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 5000; transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        h1, h2 { font-family: 'Dancing Script', cursive; font-weight: 500; color: #7d6e5d; }
-
-        /* WORLD SECTION */
-        .world-title { font-size: 4rem; cursor: pointer; transition: 1s; margin-bottom: 20px; }
-        .world-title:hover { letter-spacing: 5px; opacity: 0.7; }
-
-        /* ENVELOPE */
-        .envelope-section { display: none; opacity: 0; transform: translateY(30px); }
-        .envelope-wrapper { width: 300px; height: 200px; background: #ece4d8; border: 1px solid #d4c5b3; position: relative; cursor: pointer; transition: 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .envelope-flap { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #e4dacb; clip-path: polygon(0 0, 50% 60%, 100% 0); 
-            z-index: 2; transition: 1s; transform-origin: top;
+        .garden-intro { position: relative; width: 200px; height: 300px; cursor: pointer; }
+        
+        .stem-intro { 
+            width: 4px; height: 0; background: var(--sage); margin: 0 auto; 
+            transition: height 5s ease-in-out; 
         }
-        .opened .envelope-flap { transform: rotateX(-180deg); }
+        .garden-intro.active .stem-intro { height: 200px; }
 
-        /* FLOWERS GARDEN */
-        .letters-section { display: none; margin-top: 50px; }
-        .flowers-garden { display: flex; gap: 150px; margin-top: 80px; align-items: flex-end; }
+        .bloom-intro { 
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%) scale(0);
+            transition: transform 3s 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .garden-intro.active .bloom-intro { transform: translateX(-50%) scale(1.5); }
 
-        /* Lily Visuals */
-        .flower-label { margin-top: 20px; font-family: 'Crimson Text'; font-style: italic; font-size: 1.2rem; }
-        .lily { width: 100px; position: relative; cursor: pointer; }
-        .stem { width: 4px; height: 0; background: #6b8e23; margin: 0 auto; transition: 2.5s ease-out; }
-        .grow .stem { height: 150px; }
+        .petal-intro {
+            position: absolute; width: 30px; height: 60px; background: #fff;
+            border: 1px solid #f0e0d0; border-radius: 50% 50% 10% 10%;
+            transform-origin: bottom center; opacity: 0.9;
+        }
 
-        .lily-bloom { position: absolute; top: -50px; left: 50%; transform: translateX(-50%) scale(0); transition: 2s 1.5s ease; }
-        .grow .lily-bloom { transform: translateX(-50%) scale(1); }
-        .lily-petal { position: absolute; width: 25px; height: 55px; background: #fffcf5; border: 1px solid #eee; border-radius: 50% 50% 10% 10%; transform-origin: bottom center; }
-        .lily-petal:nth-child(1) { transform: rotate(-30deg); }
-        .lily-petal:nth-child(2) { transform: rotate(0deg); height: 65px; }
-        .lily-petal:nth-child(3) { transform: rotate(30deg); }
+        .start-text { 
+            margin-top: 50px; opacity: 0; transition: 2s 7s; 
+            font-style: italic; letter-spacing: 2px; 
+        }
+        .garden-intro.active + .start-text { opacity: 1; }
 
-        /* Sunflower Visuals */
-        .sunflower-bloom { position: absolute; top: -45px; left: 50%; transform: translateX(-50%) scale(0); transition: 2s 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .grow .sunflower-bloom { transform: translateX(-50%) scale(1); }
-        .sun-petal { position: absolute; width: 12px; height: 35px; background: #eeb422; border-radius: 50%; transform-origin: center 45px; }
-        .sun-center { width: 35px; height: 35px; background: #3d2b1f; border-radius: 50%; position: absolute; top: 10px; left: -11px; z-index: 5; border: 2px solid #5d3a1a; }
+        /* 2. SECTION STYLING */
+        .section {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 50px 20px;
+            opacity: 0; transform: translateY(30px); transition: all 2s;
+        }
+        .section.visible { opacity: 1; transform: translateY(0); }
 
-        /* STATEMENTS */
-        .statements-section { display: none; max-width: 700px; margin: 0 auto; text-align: center; }
-        .statement-card { margin-bottom: 80px; opacity: 0; transform: translateY(40px); transition: 2s; }
-        .statement-card.visible { opacity: 1; transform: translateY(0); }
-        .statement-card h3 { font-size: 2rem; margin-bottom: 10px; font-style: italic; }
+        /* 3. ENVELOPE & SURPRISE BLOOM */
+        .envelope-container { position: relative; width: 350px; height: 250px; margin: 50px 0; }
+        
+        .envelope {
+            width: 100%; height: 100%; background: #ece4d8; border: 1px solid #d4c5b3;
+            position: relative; cursor: pointer; z-index: 10;
+        }
+        
+        .flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #e4dacb; clip-path: polygon(0 0, 50% 60%, 100% 0);
+            z-index: 12; transition: transform 1.5s; transform-origin: top;
+        }
+        
+        .letter {
+            position: absolute; bottom: 5px; left: 5%; width: 90%; height: 90%;
+            background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: transform 1.5s 1s; z-index: 11; font-size: 14px;
+        }
 
-        /* MODALS */
-        .message-modal { position: fixed; inset: 0; background: rgba(253, 250, 245, 0.98); z-index: 5000; display: none; opacity: 0; transition: 1.5s; align-items: center; justify-content: center; }
-        .message-modal.active { display: flex; opacity: 1; }
-        .message-box { max-width: 500px; padding: 40px; text-align: center; border: 1px solid #d4c5b3; }
-        .message-img { width: 100%; border-radius: 2px; filter: sepia(30%); margin: 20px 0; }
+        .opened .flap { transform: rotateX(-180deg); }
+        .opened .letter { transform: translateY(-120px); height: auto; }
 
-        #audioControl { position: fixed; bottom: 30px; left: 30px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #a68b6d; z-index: 10000; cursor: pointer; }
+        /* Bunga sekeliling amplop */
+        .surprise-flower {
+            position: absolute; opacity: 0; transition: 2s 2s; transform: scale(0);
+        }
+        .opened ~ .surprise-flower { opacity: 1; transform: scale(1); }
+
+        /* 4. PHOTO GRID VIBES */
+        .photo-card {
+            width: 100%; max-width: 400px; padding: 15px; background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transform: rotate(-2deg);
+            margin: 20px; transition: 1s;
+        }
+        .photo-card:nth-child(even) { transform: rotate(2deg); }
+        .photo-card img { width: 100%; filter: sepia(20%) contrast(90%); }
+        .photo-card p { font-family: 'Dancing Script'; font-size: 1.5rem; margin-top: 10px; text-align: center; }
+
+        /* BUTTONS */
+        .nav-btn {
+            padding: 12px 30px; border: 1px solid var(--accent);
+            background: transparent; color: var(--accent); cursor: pointer;
+            margin-top: 30px; transition: 0.5s;
+        }
+        .nav-btn:hover { background: var(--accent); color: #fff; }
+
+        #audio-status {
+            position: fixed; bottom: 20px; right: 20px; font-size: 10px;
+            letter-spacing: 2px; color: var(--accent); z-index: 10000;
+        }
     </style>
 </head>
 <body>
 
-    <audio id="bgMusic" loop>
-        <source src="nadin.mp3" type="audio/mpeg">
-    </audio>
+    <div class="overlay"></div>
+    <audio id="bgMusic" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
+    <div id="audio-status">TAP UNTUK MUSIK</div>
 
-    <div id="audioControl">Music is playing...</div>
-
-    <div class="intro-screen" id="introScreen">
-        <button class="start-btn" id="startBtn">MASUK KE DUNIA KAMI</button>
-    </div>
-
-    <div class="page-wrapper" id="pageWrapper">
-        <section class="section world-section">
-            <h1 class="world-title" id="worldTitle">Untuk Kita, Dunia, dan Kotornya</h1>
-            <p style="font-style: italic; color: #8c7e6d;">(Sentuh judul di atas dengan lembut)</p>
-        </section>
-
-        <section class="section envelope-section" id="envelopeSection">
-            <div class="envelope-wrapper" id="envelopeWrapper">
-                <div class="envelope-flap"></div>
-                <div style="position:absolute; bottom: 20px; width: 100%; text-align: center; font-style: italic; color: #7d6e5d;">Cinta dan Kotornya</div>
-            </div>
-            <p style="margin-top: 30px; font-style: italic;">Buka perlahan...</p>
-        </section>
-
-        <section class="section letters-section" id="lettersSection">
-            <h2>Pilih Bunga Kalian</h2>
-            <div class="flowers-garden">
-                <div class="lily-container" id="lilyContainer">
-                    <div class="lily" id="lilyFlower">
-                        <div class="stem"></div>
-                        <div class="lily-bloom">
-                            <div class="lily-petal"></div><div class="lily-petal"></div><div class="lily-petal"></div>
-                        </div>
-                    </div>
-                    <p class="flower-label">Sarah</p>
-                </div>
-
-                <div class="sunflower-container" id="sunflowerContainer">
-                    <div class="sunflower" id="sunflowerFlower">
-                        <div class="stem" style="background: #556b2f;"></div>
-                        <div class="sunflower-bloom" id="sunPetals">
-                            <div class="sun-center"></div>
-                        </div>
-                    </div>
-                    <p class="flower-label">Amal</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="statements-section" id="statementsSection">
-            <div class="statement-card">
-                <h3>Semester kemarin memang berat.</h3>
-                <p>Ada saat di mana napas terasa sesak dan langkah terasa kaku. Tapi kau masih di sini, bukan?</p>
-            </div>
-            <div class="statement-card">
-                <h3>Dan esok mungkin akan lebih gaduh.</h3>
-                <p>Deadline dan ekspektasi akan datang seperti ombak, namun jangan biarkan ia menenggelamkanmu.</p>
-            </div>
-            <div class="statement-card">
-                <h3>Kita punya satu sama lain.</h3>
-                <p>Untuk saling memaafkan, untuk saling mendekap dalam kata-kata yang tak terucap.</p>
-            </div>
-            <div class="statement-card">
-                <h2 style="font-size: 3rem;">Let's Grow Better, Together.</h2>
-            </div>
-        </section>
-    </div>
-
-    <div class="message-modal" id="sarahModal">
-        <div class="message-box">
-            <h2>Untuk Sarah</h2>
-            <p>Kau anggun seperti Lily. Meski dunia kadang kotor, murnimu jangan pernah hilang.</p>
-            <img src="sarah 1.jpeg" class="message-img">
-            <button onclick="goToStatements()" class="start-btn" style="padding: 10px 20px; font-size: 14px;">Lanjutkan Tumbuh</button>
+    <div id="intro-screen">
+        <div class="garden-intro" id="gardenTrigger">
+            <div class="stem-intro"></div>
+            <div class="bloom-intro" id="introBloom"></div>
         </div>
+        <p class="start-text">Sentuh bunganya untuk memulai...</p>
+        <button class="nav-btn" id="startBtn" style="display: none; margin-top: 20px;">Mulai Perjalanan</button>
     </div>
 
-    <div class="message-modal" id="amalModal">
-        <div class="message-box">
-            <h2>Untuk Amal</h2>
-            <p>Tetaplah bersinar, matahari kami. Maafkan yang telah lalu, mari mekar lagi dengan lebih indah.</p>
-            <img src="amal 1.jpeg" class="message-img">
-            <button onclick="goToStatements()" class="start-btn" style="padding: 10px 20px; font-size: 14px;">Lanjutkan Tumbuh</button>
-        </div>
+    <div id="main-content">
+        <section class="section" id="sec1">
+            <h1 style="font-size: 3rem; margin-bottom: 20px;">Untuk Sarah dan Amal</h1>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+                <div class="photo-card"><img src="kita 1.jpeg"><p>Kita yang dulu...</p></div>
+                <div class="photo-card"><img src="kita 2.jpeg"><p>Dan kita yang bertahan.</p></div>
+            </div>
+            <button class="nav-btn" onclick="nextSection('sec2')">Lanjut</button>
+        </section>
+
+        <section class="section" id="sec2">
+            <h2 style="font-style: italic; margin-bottom: 20px;">Sebuah Pesan Kecil</h2>
+            <div class="envelope-container">
+                <div class="envelope" id="envelopeTrigger">
+                    <div class="flap"></div>
+                    <div class="letter">
+                        <p>Semester kemarin rasanya berat ya bagi kita? <br><br>
+                        Tapi nyatanya, semester 6 mungkin akan lebih gaduh. Kita dikejar masa depan, dikejar ekspektasi. <br><br>
+                        Tapi sebelum melangkah lebih jauh, mari kita saling memaafkan. Untuk segala salah yang lalu, agar kita tumbuh lebih ringan.</p>
+                    </div>
+                </div>
+                <div class="surprise-flower" style="top:-50px; left:-50px; font-size:40px;">🌸</div>
+                <div class="surprise-flower" style="top:-50px; right:-50px; font-size:40px;">🌻</div>
+                <div class="surprise-flower" style="bottom:-30px; left:50%; font-size:40px;">🌷</div>
+            </div>
+            <p style="font-size: 0.9rem; color: #888;">(Klik amplopnya)</p>
+            <button class="nav-btn" id="toFlowerBtn" style="display:none;" onclick="nextSection('sec3')">Melihat Kita Mekar</button>
+        </section>
+
+        <section class="section" id="sec3">
+            <h2 style="margin-bottom: 50px;">Mari Mekar Bersama</h2>
+            <div style="display: flex; gap: 50px; flex-wrap: wrap; justify-content: center;">
+                <div class="photo-card" style="max-width: 250px;">
+                    <img src="sarah 1.jpeg">
+                    <p>Sarah</p>
+                    <div style="font-size: 30px; text-align: center;">🌷</div>
+                </div>
+                <div class="photo-card" style="max-width: 250px;">
+                    <img src="amal 1.jpeg">
+                    <p>Amal</p>
+                    <div style="font-size: 30px; text-align: center;">🌻</div>
+                </div>
+            </div>
+            <div style="max-width: 600px; text-align: center; margin-top: 40px; line-height: 2;">
+                <p>Masa depan memang mengejar, tapi jangan biarkan ia membunuh warnamu. <br>
+                Semester 6 ini, ayo kita hadapi dengan hati yang lebih lapang. <br>
+                Apapun yang terjadi, kita tetap diterima.</p>
+            </div>
+            <button class="nav-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">Kembali ke Awal</button>
+        </section>
     </div>
 
     <script>
         const music = document.getElementById('bgMusic');
-        const sunPetals = document.getElementById('sunPetals');
+        const introBloom = document.getElementById('introBloom');
 
-        // Buat kelopak matahari secara otomatis
-        for(let i=0; i<12; i++) {
-            let p = document.createElement('div');
-            p.className = 'sun-petal';
-            p.style.transform = `rotate(${i * 30}deg)`;
-            sunPetals.appendChild(p);
+        // 1. Inisialisasi Kelopak Bunga Intro
+        for(let i=0; i<8; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal-intro';
+            petal.style.transform = `rotate(${i * 45}deg)`;
+            introBloom.appendChild(petal);
         }
 
-        // Start Journey & Music
+        // 2. Animasi Intro Tumbuh
+        document.getElementById('gardenTrigger').onclick = function() {
+            this.classList.add('active');
+            music.play().catch(() => { document.getElementById('audio-status').innerText = "KLIK MANA SAJA UNTUK MUSIK"; });
+            setTimeout(() => {
+                document.getElementById('startBtn').style.display = 'block';
+            }, 8000);
+        };
+
+        // 3. Mulai Perjalanan
         document.getElementById('startBtn').onclick = () => {
-            music.play();
-            document.getElementById('introScreen').classList.add('fade-out');
-            document.getElementById('pageWrapper').classList.add('visible');
-        };
-
-        // World to Envelope
-        document.getElementById('worldTitle').onclick = () => {
-            const sec = document.getElementById('envelopeSection');
-            sec.style.display = 'flex';
+            document.getElementById('intro-screen').classList.add('fade-out');
             setTimeout(() => {
-                sec.style.opacity = '1';
-                sec.style.transform = 'translateY(0)';
-                window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
-            }, 100);
+                document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('sec1').classList.add('visible');
+            }, 2500);
         };
 
-        // Envelope to Flowers
-        document.getElementById('envelopeWrapper').onclick = function() {
-            this.classList.add('opened');
+        // 4. Buka Amplop
+        document.getElementById('envelopeTrigger').onclick = function() {
+            this.parentElement.classList.add('opened');
             setTimeout(() => {
-                const sec = document.getElementById('lettersSection');
-                sec.style.display = 'flex';
-                window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
-            }, 1500);
+                document.getElementById('toFlowerBtn').style.display = 'block';
+            }, 3000);
         };
 
-        // Grow Sarah
-        document.getElementById('lilyContainer').onclick = () => {
-            document.getElementById('lilyFlower').classList.add('grow');
+        // 5. Navigasi Section
+        function nextSection(id) {
+            const next = document.getElementById(id);
+            next.scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
-                document.getElementById('sarahModal').classList.add('active');
-            }, 4000);
-        };
-
-        // Grow Amal
-        document.getElementById('sunflowerContainer').onclick = () => {
-            document.getElementById('sunflowerFlower').classList.add('grow');
-            setTimeout(() => {
-                document.getElementById('amalModal').classList.add('active');
-            }, 4000);
-        };
-
-        function goToStatements() {
-            document.querySelectorAll('.message-modal').forEach(m => m.classList.remove('active'));
-            const sec = document.getElementById('statementsSection');
-            sec.style.display = 'block';
-            window.scrollTo({top: sec.offsetTop, behavior: 'smooth'});
-            
-            const cards = document.querySelectorAll('.statement-card');
-            cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('visible'), (i+1) * 1000);
-            });
+                next.classList.add('visible');
+            }, 800);
         }
 
-        // Mute/Unmute
-        document.getElementById('audioControl').onclick = () => {
+        // Interaksi Audio Global
+        document.body.addEventListener('click', () => {
             if(music.paused) {
                 music.play();
-                document.getElementById('audioControl').innerText = "Music is playing...";
-            } else {
-                music.pause();
-                document.getElementById('audioControl').innerText = "Music is paused";
+                document.getElementById('audio-status').innerText = "🎵 Tapi Diterima";
             }
-        };
+        }, { once: true });
     </script>
 </body>
 </html>
