@@ -25,9 +25,8 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(180deg, #e8dcc4 0%, #d4c5a9 100%);
+            background: linear-gradient(145deg, #f0f8ff, #e0ffff);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -39,103 +38,120 @@
             pointer-events: none;
         }
 
-        .vine-container {
+        .page {
+            width: 85%;
+            max-width: 1000px;
+            height: 90%;
+            background: white;
+            border: 12px double #0099cc;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
             position: relative;
-            width: 80%;
-            max-width: 900px;
-            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
         }
 
-        svg {
+        /* Corner Decorations */
+        .corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 4px solid #ff66b2;
+        }
+
+        .top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        /* Inner Dotted Border */
+        .inner-border {
+            position: absolute;
+            top: 30px; 
+            bottom: 30px; 
+            left: 30px; 
+            right: 30px;
+            border: 3px dotted #33cccc;
+            border-radius: 12px;
+        }
+
+        /* Decorative symbols */
+        .symbol {
+            position: absolute;
+            font-size: 40px;
+            color: #ff6699;
+            opacity: 0.7;
+        }
+
+        .symbol.top { top: 30px; left: 50%; transform: translateX(-50%); }
+        .symbol.bottom { bottom: 30px; left: 50%; transform: translateX(-50%); }
+
+        /* Content inside page */
+        .intro-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
             width: 100%;
-            height: 100%;
         }
 
-        .vine-path {
-            fill: none;
-            stroke: #5a7d5a;
-            stroke-width: 4;
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000;
-        }
-
-        .vine-path.drawing {
-            animation: drawVine 3s ease-out forwards;
-        }
-
-        @keyframes drawVine {
-            to { stroke-dashoffset: 0; }
-        }
-
-        /* Clickable flowers on vine */
-        .vine-flower {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            transform: scale(0);
-            transition: transform 0.3s ease;
-        }
-
-        .vine-flower.bloomed {
-            animation: bloomVineFlower 0.8s ease forwards;
-        }
-
-        @keyframes bloomVineFlower {
-            to { transform: scale(1); }
-        }
-
-        .vine-flower:hover {
-            transform: scale(1.2);
-        }
-
-        .vine-flower1 { top: 20%; left: 15%; }
-        .vine-flower2 { top: 35%; left: 35%; }
-        .vine-flower3 { top: 50%; left: 55%; }
-        .vine-flower4 { top: 28%; left: 75%; }
-
-        /* Text bubbles that appear when clicking flowers */
-        .intro-text-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px 35px;
-            border-radius: 20px;
-            font-size: 20px;
+        .intro-text-line {
+            font-size: 24px;
             color: #4a4a4a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px 0;
             opacity: 0;
             transform: translateY(20px);
-            max-width: 500px;
-            text-align: center;
-            line-height: 1.6;
         }
 
-        .intro-text-bubble.show {
-            animation: showBubble 0.6s ease forwards;
+        .intro-text-line.show {
+            animation: showText 0.8s ease forwards;
         }
 
-        @keyframes showBubble {
+        @keyframes showText {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .bubble1 { top: 15%; left: 50%; transform: translateX(-50%) translateY(20px); }
-        .bubble2 { top: 35%; left: 50%; transform: translateX(-50%) translateY(20px); }
-        .bubble3 { top: 55%; left: 50%; transform: translateX(-50%) translateY(20px); }
-
-        .next-hint {
-            position: absolute;
-            bottom: 50px;
+        .tap-instruction {
+            margin-top: 40px;
             font-size: 16px;
             color: #666;
             opacity: 0;
-            animation: fadeIn 1s ease 0.5s forwards;
+        }
+
+        .tap-instruction.show {
+            animation: fadeIn 1s ease forwards;
         }
 
         @keyframes fadeIn {
             to { opacity: 1; }
+        }
+
+        .continue-btn {
+            margin-top: 30px;
+            padding: 14px 40px;
+            background: #0099cc;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .continue-btn.show {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .continue-btn:hover {
+            background: #007aa3;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         /* ====== MAIN CONTENT ====== */
@@ -790,15 +806,13 @@
         }
 
         @media (max-width: 768px) {
-            .vine-container {
+            .page {
                 width: 95%;
-                height: 400px;
+                padding: 40px 20px;
             }
 
-            .intro-text-bubble {
-                font-size: 16px;
-                padding: 20px 25px;
-                max-width: 90%;
+            .intro-text-line {
+                font-size: 18px;
             }
 
             .world-title {
@@ -826,30 +840,25 @@
 <body>
     <!-- INTRO SCREEN -->
     <div class="intro-screen" id="introScreen">
-        <div class="vine-container">
-            <svg viewBox="0 0 900 500" id="vineSvg">
-                <path class="vine-path" id="vinePath" d="M 50 400 Q 150 300, 250 350 T 450 250 T 650 320 T 850 200" />
-            </svg>
-            
-            <!-- Clickable flowers on vine -->
-            <div class="vine-flower vine-flower1" id="vineFlower1">🌸</div>
-            <div class="vine-flower vine-flower2" id="vineFlower2">🌺</div>
-            <div class="vine-flower vine-flower3" id="vineFlower3">🌼</div>
-            <div class="vine-flower vine-flower4" id="vineFlower4">🌷</div>
-            
-            <!-- Text bubbles -->
-            <div class="intro-text-bubble bubble1" id="bubble1">
-                Kadang hidup tidak seindah yang dibayangkan
-            </div>
-            <div class="intro-text-bubble bubble2" id="bubble2">
-                Tapi justru dari situ kita belajar
-            </div>
-            <div class="intro-text-bubble bubble3" id="bubble3">
-                Untuk menerima dan tumbuh lebih baik
-            </div>
-            
-            <div class="next-hint" id="nextHint" style="display: none;">
-                Tap bunga untuk melanjutkan →
+        <div class="page">
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+            <div class="inner-border"></div>
+            <div class="symbol top">✿</div>
+            <div class="symbol bottom">❀</div>
+
+            <div class="intro-content">
+                <div class="intro-text-line" id="line1">Kadang hidup tidak seindah yang dibayangkan</div>
+                <div class="intro-text-line" id="line2">Tapi justru dari situ kita belajar</div>
+                <div class="intro-text-line" id="line3">Untuk menerima dan tumbuh lebih baik</div>
+                
+                <div class="tap-instruction" id="tapInstruction">
+                    Tap untuk melanjutkan
+                </div>
+                
+                <button class="continue-btn" id="continueBtn">Lanjutkan</button>
             </div>
         </div>
     </div>
@@ -1036,51 +1045,35 @@
         const audioPlayer = document.getElementById('audioPlayer');
         const playButton = document.getElementById('playButton');
         let musicStarted = false;
-        let currentBubble = 0;
-        let flowersClicked = 0;
+        let currentLine = 0;
 
-        // INTRO FLOW
-        setTimeout(() => {
-            document.getElementById('vinePath').classList.add('drawing');
-        }, 500);
-
-        setTimeout(() => {
-            const flowers = document.querySelectorAll('.vine-flower');
-            flowers.forEach((flower, index) => {
-                setTimeout(() => {
-                    flower.classList.add('bloomed');
-                }, index * 400);
-            });
-        }, 3500);
-
-        setTimeout(() => {
-            document.getElementById('nextHint').style.display = 'block';
-        }, 5500);
-
-        // VINE FLOWERS CLICK - TAP TAP TO SHOW BUBBLES
-        document.getElementById('vineFlower1').addEventListener('click', () => showBubble(0));
-        document.getElementById('vineFlower2').addEventListener('click', () => showBubble(1));
-        document.getElementById('vineFlower3').addEventListener('click', () => showBubble(2));
-        document.getElementById('vineFlower4').addEventListener('click', () => {
-            if (currentBubble >= 3) {
-                // Transition to main content
-                document.getElementById('introScreen').classList.add('fade-out');
-                setTimeout(() => {
-                    document.getElementById('introScreen').style.display = 'none';
-                    document.getElementById('mainContent').classList.add('visible');
-                }, 1500);
+        // INTRO - TAP TO SHOW LINES ONE BY ONE
+        const lines = ['line1', 'line2', 'line3'];
+        
+        document.addEventListener('click', function showNextLine(e) {
+            if (currentLine < lines.length) {
+                document.getElementById(lines[currentLine]).classList.add('show');
+                currentLine++;
+                
+                if (currentLine === lines.length) {
+                    // All lines shown, show instruction and button
+                    setTimeout(() => {
+                        document.getElementById('tapInstruction').classList.add('show');
+                        document.getElementById('continueBtn').classList.add('show');
+                    }, 500);
+                    document.removeEventListener('click', showNextLine);
+                }
             }
         });
 
-        function showBubble(index) {
-            if (index === currentBubble) {
-                const bubble = document.getElementById(`bubble${index + 1}`);
-                if (bubble) {
-                    bubble.classList.add('show');
-                    currentBubble++;
-                }
-            }
-        }
+        // CONTINUE BUTTON
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            document.getElementById('introScreen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('introScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.add('visible');
+            }, 1500);
+        });
 
         // WORLD TITLE CLICK → GO TO ENVELOPE
         document.getElementById('worldTitle').addEventListener('click', () => {
