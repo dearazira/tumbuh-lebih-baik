@@ -9,167 +9,207 @@
         :root {
             --nadin-brown: #7c6a46;
             --nadin-beige: #f9f6f0;
-            --dusty-rose: #d4a373;
+            --petal-color: #e5d1b8;
+            --envelope-color: #f2ede4;
         }
 
-        body {
+        body, html {
+            margin: 0; padding: 0;
             background-color: var(--nadin-beige);
-            color: #5b574a;
-            margin: 0;
             font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            color: #5b574a;
             overflow-x: hidden;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
 
-        /* --- Intro & Bunga --- */
-        #intro { text-align: center; position: absolute; width: 100%; z-index: 10; }
-        .flower-container { position: relative; width: 60px; height: 140px; margin: 0 auto 30px; }
-        .stem { position: absolute; bottom: 0; left: 50%; width: 2px; height: 0; background: #8fa17d; animation: growStem 2s forwards ease-in-out; }
-        .petal { position: absolute; top: 0; left: 50%; width: 30px; height: 50px; background: #e5d1b8; border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%; transform-origin: bottom center; opacity: 0; border: 1px solid rgba(140, 120, 81, 0.1); }
-        @keyframes growStem { to { height: 100px; } }
-        .p1, .p2, .p3, .p4, .p5 { animation: bloom 1.5s forwards ease-out 2s; }
-        .p1 { transform: translateX(-50%) rotate(0deg); }
-        .p2 { transform: translateX(-50%) rotate(72deg); }
-        .p3 { transform: translateX(-50%) rotate(144deg); }
-        .p4 { transform: translateX(-50%) rotate(216deg); }
-        .p5 { transform: translateX(-50%) rotate(288deg); }
-        @keyframes bloom { to { opacity: 1; } }
-        #lyric-text { font-family: 'Crimson Text', serif; font-size: 1.6rem; font-style: italic; height: 40px; transition: opacity 1s; }
+        /* --- STAGE 1: INTRO BUNGA INTERAKTIF --- */
+        #intro-stage {
+            position: fixed; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; background: var(--nadin-beige);
+            transition: opacity 2s;
+        }
 
-        /* --- Konten Utama --- */
-        .hidden { display: none; opacity: 0; }
-        #main-content { max-width: 900px; width: 90%; text-align: center; padding: 50px 0; }
-        header h1 { font-family: 'Crimson Text', serif; font-size: 2.2rem; font-weight: 400; color: var(--nadin-brown); margin: 10px 0; }
-        .pre-title { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; }
+        .flower-grow { position: relative; width: 100px; height: 200px; cursor: pointer; }
+        .stem { 
+            width: 3px; background: #8fa17d; position: absolute; bottom: 0; left: 50%; 
+            height: 0; transition: height 4s ease-in-out; 
+        }
+        .blossom { 
+            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%) scale(0);
+            transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .petal-intro {
+            position: absolute; background: var(--petal-color); width: 40px; height: 60px;
+            border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%; transform-origin: bottom center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
 
-        /* --- Slideshow Photo Wrapper --- */
-        .card-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 40px; }
-        .card { background: #fff; padding: 30px; width: 300px; border: 1px solid #ece9e0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        #lyric-display { font-family: 'Crimson Text', serif; font-size: 1.5rem; font-style: italic; margin-top: 40px; height: 30px; opacity: 0; transition: opacity 1s; }
+
+        /* --- STAGE 2: AMPLOP & SURAT --- */
+        #envelope-stage { display: none; perspective: 1000px; padding-top: 100px; }
         
-        .slideshow {
-            width: 120px; height: 120px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--nadin-brown);
-            position: relative;
+        .envelope-wrapper { position: relative; width: 320px; height: 200px; background: var(--envelope-color); margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .envelope-top {
+            position: absolute; top: 0; width: 0; height: 0;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-top: 120px solid #e2ddd3; transform-origin: top; z-index: 5; transition: transform 1s;
         }
-        .slideshow img {
-            width: 100%; height: 100%; object-fit: cover;
-            position: absolute; top: 0; left: 0;
-            opacity: 0; transition: opacity 1s ease-in-out;
-            filter: sepia(20%);
+        .envelope-wrapper.open .envelope-top { transform: rotateX(180deg); z-index: 1; }
+
+        .letter {
+            position: absolute; bottom: 10px; left: 10px; right: 10px; background: white;
+            padding: 20px; height: 160px; transition: transform 2s, height 2s;
+            z-index: 2; overflow: hidden; border: 1px solid #eee;
         }
+        .envelope-wrapper.open .letter { transform: translateY(-300px); height: 1100px; width: 350px; left: -15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+
+        /* --- STAGE 3: CONTENT INSIDE LETTER --- */
+        .main-content { opacity: 0; transition: opacity 2s 1s; padding: 20px; text-align: center; }
+        .card { background: var(--nadin-beige); padding: 20px; margin-top: 30px; border: 1px solid #ece9e0; }
+        .slideshow { width: 100%; height: 200px; overflow: hidden; position: relative; margin-bottom: 15px; }
+        .slideshow img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: opacity 1s; }
         .slideshow img.active { opacity: 1; }
 
-        .card h3 { font-family: 'Crimson Text', serif; font-size: 1.6rem; color: var(--nadin-brown); }
-        .card p { font-size: 0.85rem; line-height: 1.7; text-align: justify; color: #666; }
+        /* --- FLOWER BURST PARTICLES --- */
+        .burst-flower {
+            position: absolute; width: 15px; height: 15px; background: var(--petal-color);
+            border-radius: 50%; pointer-events: none; z-index: 10; animation: fly 3s forwards ease-out;
+        }
+        @keyframes fly {
+            to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+        }
 
-        /* --- Footer & Musik --- */
-        button { background: none; border: 1px solid var(--nadin-brown); color: var(--nadin-brown); padding: 12px 25px; font-family: 'Crimson Text', serif; font-style: italic; cursor: pointer; transition: 0.5s; margin-top: 20px; }
-        button:hover { background: var(--nadin-brown); color: white; }
-        
-        #music-player { display: none; }
+        button { background: var(--nadin-brown); color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Crimson Text', serif; font-style: italic; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <audio id="lagu" loop>
-        <source src="tapi diterima.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="lagu" loop><source src="tapi diterima.mp3" type="audio/mpeg"></audio>
 
-    <div id="intro">
-        <div class="flower-container">
-            <div class="stem"></div>
-            <div class="petal p1"></div><div class="petal p2"></div>
-            <div class="petal p3"></div><div class="petal p4"></div>
-            <div class="petal p5"></div>
+    <div id="intro-stage">
+        <div class="flower-grow" onclick="startExperience()">
+            <div class="stem" id="intro-stem"></div>
+            <div class="blossom" id="intro-blossom">
+                <div class="petal-intro" style="transform: rotate(0deg)"></div>
+                <div class="petal-intro" style="transform: rotate(72deg)"></div>
+                <div class="petal-intro" style="transform: rotate(144deg)"></div>
+                <div class="petal-intro" style="transform: rotate(216deg)"></div>
+                <div class="petal-intro" style="transform: rotate(288deg)"></div>
+            </div>
         </div>
-        <p id="lyric-text">Klik di mana saja untuk mulai</p>
+        <p id="lyric-display">Klik bunga untuk mulai tumbuh...</p>
     </div>
 
-    <div id="main-content" class="hidden">
-        <header>
-            <p class="pre-title">Sebuah Rekonsiliasi</p>
-            <h1>Untuk Kita, Dunia, dan Kotornya</h1>
-        </header>
+    <div id="envelope-stage">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope-top"></div>
+            <div class="letter">
+                <div class="main-content" id="final-content">
+                    <p style="letter-spacing: 2px; font-size: 0.7rem;">REKONSILIASI</p>
+                    <h2 style="font-family: 'Crimson Text'; font-weight: 400; color: var(--nadin-brown);">Untuk Kita, Dunia, dan Kotornya</h2>
+                    
+                    <div class="card">
+                        <div class="slideshow" id="slide-sarah">
+                            <img src="sarah 1.jpeg" class="active">
+                            <img src="sarah 2.jpeg">
+                            <img src="kita 1.jpeg">
+                        </div>
+                        <h4 style="font-family: 'Crimson Text';">Untuk Sarah</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.6;">"Jika kemarin aku adalah duri yang tak sengaja melukai jemarimu, maafkan aku. Mari basuh debu yang lama, dan biarkan kita tumbuh lagi."</p>
+                    </div>
 
-        <div class="card-grid">
-            <div class="card">
-                <div class="slideshow" id="slides-sarah">
-                    <img src="sarah 1.jpeg" class="active">
-                    <img src="sarah 2.jpeg">
-                </div>
-                <h3>Untuk Sarah</h3>
-                <p>"Jika kemarin aku adalah duri yang tak sengaja melukai jemarimu, maafkan aku. Kita sudah berjalan sejauh ini, melewati musim yang barangkali tak selalu ramah. Di semester 6 nanti, mari tumbuh lagi tanpa benci."</p>
-            </div>
+                    <div class="card">
+                        <div class="slideshow" id="slide-amal">
+                            <img src="amal 1.jpeg" class="active">
+                            <img src="amal 2.jpeg">
+                            <img src="kita 2.jpeg">
+                        </div>
+                        <h4 style="font-family: 'Crimson Text';">Untuk Amal</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.6;">"Banyak kurangku yang kau dekap dengan sabar. Mari saling memaafkan agar kita tetap punya satu sama lain untuk pulang."</p>
+                    </div>
 
-            <div class="card">
-                <div class="slideshow" id="slides-amal">
-                    <img src="amal 1.jpeg" class="active">
-                    <img src="amal 2.jpeg">
+                    <button onclick="location.reload()">Mulai Lagi dari Awal?</button>
                 </div>
-                <h3>Untuk Amal</h3>
-                <p>"Banyak kurangku yang kau dekap dengan sabar, meski aku seringkali hanya memberi bau tanah. Semester depan akan menagih waktu yang kian sempit, namun mari saling memaafkan agar kita tetap punya satu sama lain untuk pulang."</p>
             </div>
         </div>
-
-        <footer>
-            <button onclick="location.reload()">Maukah Kita Tumbuh Bersama Lagi?</button>
-        </footer>
     </div>
 
     <script>
         const quotes = ["Sempurna tak ada padaku...", "Atas harumnya kasihmu...", "Segala kurangku...", "Tapi diterima."];
-        let i = 0;
-        let started = false;
+        let hasStarted = false;
 
-        // Mulai semuanya lewat klik (karena kebijakan autoplay browser)
-        document.body.addEventListener('click', function() {
-            if(!started) {
-                started = true;
-                document.getElementById('lagu').play();
-                runIntro();
-            }
-        });
-
-        function runIntro() {
-            if (i < quotes.length) {
-                document.getElementById('lyric-text').style.opacity = 0;
+        function startExperience() {
+            if(hasStarted) return;
+            hasStarted = true;
+            document.getElementById('lagu').play();
+            
+            // 1. Tumbuhkan batang
+            document.getElementById('intro-stem').style.height = '150px';
+            
+            // 2. Jalankan lirik
+            let i = 0;
+            const lyricInterval = setInterval(() => {
+                const el = document.getElementById('lyric-display');
+                el.style.opacity = 0;
                 setTimeout(() => {
-                    document.getElementById('lyric-text').innerText = quotes[i];
-                    document.getElementById('lyric-text').style.opacity = 1;
-                    i++;
-                    setTimeout(runIntro, 3000);
-                }, 800);
-            } else {
-                showMain();
-            }
+                    if(i < quotes.length) {
+                        el.innerText = quotes[i];
+                        el.style.opacity = 1;
+                        if(i === 3) document.getElementById('intro-blossom').style.transform = 'translate(-50%, -50%) scale(1.5)';
+                        i++;
+                    } else {
+                        clearInterval(lyricInterval);
+                        setTimeout(transitionToEnvelope, 2000);
+                    }
+                }, 1000);
+            }, 3500);
         }
 
-        function showMain() {
-            document.getElementById('intro').style.opacity = 0;
+        function transitionToEnvelope() {
+            document.getElementById('intro-stage').style.opacity = 0;
             setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                document.getElementById('main-content').classList.remove('hidden');
-                setTimeout(() => { document.getElementById('main-content').style.opacity = 1; }, 100);
+                document.getElementById('intro-stage').style.display = 'none';
+                document.getElementById('envelope-stage').style.display = 'block';
+                setTimeout(openEnvelope, 1500);
+            }, 2000);
+        }
+
+        function openEnvelope() {
+            const env = document.getElementById('envelope');
+            env.classList.add('open');
+            
+            // Burst bunga saat terbuka
+            for(let i=0; i<30; i++) {
+                createFlowerBurst(env);
+            }
+
+            setTimeout(() => {
+                document.getElementById('final-content').style.opacity = 1;
                 startSlideshows();
-            }, 1000);
+            }, 2000);
+        }
+
+        function createFlowerBurst(parent) {
+            const f = document.createElement('div');
+            f.className = 'burst-flower';
+            const x = (Math.random() - 0.5) * 500;
+            const y = (Math.random() - 0.8) * 500;
+            f.style.setProperty('--x', `${x}px`);
+            f.style.setProperty('--y', `${y}px`);
+            f.style.left = '50%';
+            f.style.top = '20%';
+            parent.appendChild(f);
+            setTimeout(() => f.remove(), 3000);
         }
 
         function startSlideshows() {
-            setInterval(() => {
-                rotateImages('slides-sarah');
-                rotateImages('slides-amal');
-            }, 3000);
+            setInterval(() => { rotate('slide-sarah'); rotate('slide-amal'); }, 3000);
         }
 
-        function rotateImages(id) {
-            const container = document.getElementById(id);
-            const imgs = container.getElementsByTagName('img');
+        function rotate(id) {
+            const imgs = document.getElementById(id).getElementsByTagName('img');
             let activeIdx = 0;
             for(let j=0; j<imgs.length; j++) {
                 if(imgs[j].classList.contains('active')) {
@@ -178,8 +218,7 @@
                     break;
                 }
             }
-            let nextIdx = (activeIdx + 1) % imgs.length;
-            imgs[nextIdx].classList.add('active');
+            imgs[(activeIdx + 1) % imgs.length].classList.add('active');
         }
     </script>
 </body>
